@@ -9,6 +9,8 @@ const FileStore = require( 'session-file-store' )( session );
 // create an instance of express app
 let app = express();
 
+// static folder
+app.use( express.static( 'public' ) );
 // set the view engine
 app.set( "view engine", "hbs" );
 
@@ -18,8 +20,7 @@ app.set( "view engine", "hbs" );
 wax.on( hbs.handlebars );
 wax.setLayoutPath( "./views/layouts" );
 
-// static folder
-app.use( express.static( 'public' ) );
+
 // enable forms
 app.use(
     express.urlencoded( {

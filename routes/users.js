@@ -110,5 +110,11 @@ router.get( "/profile", async ( req, res ) => {
     } )
 } )
 
+router.get( "/logout", async ( req, res ) => {
+    req.session.user = null;
+    req.flash( 'success_messages', "Goodbye" );
+    res.redirect( "/users/login" );
+} )
+
 module.exports =
     router

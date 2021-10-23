@@ -1,0 +1,12 @@
+ .fade {
+     opacity: 0;
+     -webkit-transition: opacity 1s ease;
+     -moz-transition: opacity 1s ease;
+     -o-transition: opacity 1s ease;
+     transition: opacity 1s ease;
+ }
+
+ .absolute {
+     float: right;
+     position: absolute;
+ }
