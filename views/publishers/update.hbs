@@ -1,0 +1,12 @@
+{{#extends 'base'}}
+
+    {{#block 'content'}}
+        <h1 class="text-center my-5">Update Publisher: {{publisher.name}}</h1>
+        <form method="POST" style="width:50%; margin: 0 auto">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+            {{{form}}}
+            <input type="submit" value="Update publisher" class="btn btn-primary mt-4" />
+        </form>
+    {{/block}}
+   
+{{/extends}}

@@ -54,7 +54,7 @@ router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
 
 router.get( "/:author_id/delete", checkIfAuthenticated, async ( req, res ) => {
     // fetch the author that we want to delete
-    const author = await dataLayer.getAuthorById( req.params.author_id, Author )
+    const author = await dataLayer.getAuthorById( req.params.author_id )
 
     res.render( "authors/delete", {
         author: author.toJSON()

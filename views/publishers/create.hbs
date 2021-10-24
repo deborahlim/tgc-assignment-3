@@ -1,0 +1,10 @@
+{{#extends "base"}}
+{{#block "content"}}
+<form method="POST" class="form">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+      {{{form}}}
+       <input type="submit" value="Add Publisher" class="btn btn-primary mt-3" />
+</form>
+
+{{/block}}
+{{/extends}}
