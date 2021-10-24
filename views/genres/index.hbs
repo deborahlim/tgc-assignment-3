@@ -1,0 +1,31 @@
+{{#extends 'base'}}
+
+    {{#block 'content'}}
+        <h1>Genres</h1>
+        <a href="genres/create" class="btn btn-primary">Add Genre</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+            <tbody class="">
+                {{#each genres}}
+                    <tr class="align-middle">
+                        <td>
+                            {{this.id}}
+                        </td>
+                        <td>{{this.name}}</td>
+                        <td>
+                            <a href="/genres/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{/block}}
+
+{{/extends}}

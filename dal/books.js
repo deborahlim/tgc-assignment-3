@@ -1,7 +1,8 @@
 const {
     Book,
     Author,
-    Publisher
+    Publisher,
+    Genre
 } = require( "../models" )
 
 const getAllRelated = async ( model ) => {
@@ -35,9 +36,18 @@ const getPublisherById = async ( publisherId ) => {
     } )
 }
 
+const getGenreById = async ( genreId ) => {
+    return await Genre.where( {
+        id: parseInt( genreId )
+    } ).fetch( {
+        require: true,
+    } )
+}
+
 module.exports = {
     getAllRelated,
     getBookById,
     getAuthorById,
-    getPublisherById
+    getPublisherById,
+    getGenreById
 }

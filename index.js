@@ -76,6 +76,7 @@ const cloudinaryRoutes = require( "./routes/cloudinary" );
 const userRoutes = require( "./routes/users" );
 const authorRoutes = require( "./routes/authors" );
 const publisherRoutes = require( "./routes/publishers" );
+const genreRoutes = require( "./routes/genres" );
 async function main() {
     app.use( "/", landingRoutes );
     app.use( "/books", booksRoutes );
@@ -83,6 +84,7 @@ async function main() {
     app.use( "/users", userRoutes );
     app.use( "/authors", authorRoutes );
     app.use( "/publishers", publisherRoutes );
+    app.use( "/genres", genreRoutes )
 
 
 }
