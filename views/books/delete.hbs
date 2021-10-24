@@ -1,9 +1,7 @@
 {{#extends 'base'}}
-
     {{#block 'content'}}
-
         <h1 class="my-5 text-center">Deleting Book: {{book.title}}</h1>
-        <form method="POST" style="width:50%; margin: 0 auto">
+        <form method="POST" class="form">
             <input type="hidden" name="_csrf" value="{{csrfToken}}" />
             <div class="alert alert-danger text-center">
                 <p>{{csrfToken}}</p>

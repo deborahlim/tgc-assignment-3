@@ -192,9 +192,24 @@ const createLoginForm = () => {
     } )
 }
 
+const createAuthorForm = () => {
+    return forms.create( {
+        name: fields.string( {
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label" ]
+            }
+        } )
+    } )
+}
+
+
+
 module.exports = {
     createBookForm,
     bootstrapField,
     registerUserForm,
-    createLoginForm
+    createLoginForm,
+    createAuthorForm
 }

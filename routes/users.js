@@ -24,7 +24,10 @@ router.get( "/register", async ( req, res ) => {
     let allRoles = await dataLayer.getAllRoles()
     const registerForm = registerUserForm( allRoles );
     res.render( "users/register", {
-        form: registerForm.toHTML( bootstrapField )
+        form: registerForm.toHTML( bootstrapField ),
+        active: {
+            Register: true
+        }
     } )
 } )
 

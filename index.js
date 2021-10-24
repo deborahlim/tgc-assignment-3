@@ -74,11 +74,13 @@ const landingRoutes = require( './routes/landing' );
 const booksRoutes = require( "./routes/books" );
 const cloudinaryRoutes = require( "./routes/cloudinary" );
 const userRoutes = require( "./routes/users" );
+const authorRoutes = require( "./routes/authors" );
 async function main() {
     app.use( "/", landingRoutes );
     app.use( "/books", booksRoutes );
     app.use( "/cloudinary", cloudinaryRoutes );
     app.use( "/users", userRoutes );
+    app.use( "/authors", authorRoutes );
 
 }
 main();

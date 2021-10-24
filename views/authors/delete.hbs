@@ -1,0 +1,15 @@
+{{#extends "base"}}
+    {{#block "content"}}
+        <h1 class="my-5 text-center">Deleting Author: {{author.name}}</h1>
+        <form method="POST" class="form"> 
+            <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+            <div class="alert alert-danger text-center"
+                <p>Are you sure you want to delete {{author.name}}?</p>
+                <input type="submit" value="Yes" class="btn btn-danger" />
+                <a href="/authors" class="btn btn-primary">No</a>
+            </div>
+
+        </form>
+    {{/block}}
+
+{{/extends}}

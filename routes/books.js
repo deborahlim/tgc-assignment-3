@@ -24,13 +24,16 @@ router.get( "/", checkIfAuthenticated, async ( req, res ) => {
     let books = await Book.collection().fetch( {
         withRelated: [ "genres", "formats", "publishers", "tags", "authors" ]
     } );
-    console.log( books.toJSON() )
+    // console.log( books.toJSON() )
     let formattedDateBooks = books.toJSON()
     formattedDateBooks.forEach( ( book ) => {
         book.publishedDate = book.publishedDate.toISOString().slice( 0, 10 );
     } )
     res.render( 'books/index', {
-        books: formattedDateBooks // #3 - convert collection to JSON
+        books: formattedDateBooks,
+        active: {
+            Books: true
+        } // #3 - convert collection to JSON
     } )
 } )
 
@@ -82,8 +85,8 @@ router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
             if ( authors ) {
                 await book.authors().attach( authors.split( "," ) )
             }
-            console.log( book.toJSON() );
-            req.flash( "success_messages", `New Book ${book.title} has been added` )
+            // console.log( book.toJSON() );
+            req.flash( "success_messages", `New Book ${book.toJSON().title} has been added` )
             res.redirect( "/books" );
         },
         error: async ( form ) => {
@@ -120,7 +123,7 @@ router.get( "/:book_id/update", checkIfAuthenticated, async ( req, res ) => {
     let selectedTags = await book.related( "tags" ).pluck( "id" );
     bookForm.fields.tags.value = selectedTags;
     let selectedAuthors = await book.related( "authors" ).pluck( "id" );
-    bookForm.fields.tags.value = selectedAuthors;
+    bookForm.fields.authors.value = selectedAuthors;
     res.render( 'books/update', {
         form: bookForm.toHTML( bootstrapField ),
         book: book.toJSON(),
@@ -139,6 +142,7 @@ router.post( "/:book_id/update", checkIfAuthenticated, async ( req, res ) => {
     const allAuthors = await dataLayer.getAllRelated( Author )
     // retrive the book instance with book id
     const book = await dataLayer.getBookById( req.params.book_id )
+    // console.log( book.toJSON() )
     const bookForm = createBookForm( allFormats, allGenres, allPublishers, allTags, allAuthors );
     bookForm.handle( req, {
         success: async ( form ) => {
@@ -171,7 +175,7 @@ router.post( "/:book_id/update", checkIfAuthenticated, async ( req, res ) => {
             // add in all the tags selected in the form
             await book.tags().attach( selectedTagIds );
             await book.authors().attach( selectedAuthorIds );
-            req.flash( "success_messages", `Book ${book.title} has been updated` )
+            req.flash( "success_messages", `Book ${book.toJSON().title} has been updated` )
             res.redirect( '/books' );
         },
         error: async ( form ) => {
