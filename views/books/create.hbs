@@ -3,6 +3,7 @@
     {{#block 'content'}}
         <h1 class="text-center my-5">Create New Book</h1>
         <form method="POST" class="" style="width:50%; margin: 0 auto">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}" />
             {{{form}}}
             <div class="">
                 <a href="#" class="btn btn-primary mt-3" id="upload_widget">Upload Cover Art</a>
@@ -25,13 +26,13 @@
 
             let cloudinaryPreset = "{{cloudinaryPreset}}";
 
-            async function generateSignature(callback, params_to_sign) {
-                let response = await axios.get('/cloudinary/sign', {
+            async function generateSignature( callback, params_to_sign ) {
+                let response = await axios.get( '/cloudinary/sign', {
                     params: {
                         'params_to_sign': params_to_sign
                     }
-                });
-                callback(response.data);
+                } );
+                callback( response.data );
             }
             let config = {
                 'cloudName': cloudinaryName,
@@ -39,19 +40,19 @@
                 'uploadPreset': cloudinaryPreset,
                 'uploadSignature': generateSignature
             };
-            let afterUpload = (error, result) => {
-                if (!error && result && result.event == 'success') {
-                    document.querySelector('#uploaded_image').src = result.info.secure_url;
-                    document.querySelector('#uploaded_image').style.display = "inline";
-                    document.querySelector('#upload_widget').style.display = "none";
-                    document.querySelector('#id_imageUrl').value = result.info.secure_url;
+            let afterUpload = ( error, result ) => {
+                if ( !error && result && result.event == 'success' ) {
+                    document.querySelector( '#uploaded_image' ).src = result.info.secure_url;
+                    document.querySelector( '#uploaded_image' ).style.display = "inline";
+                    document.querySelector( '#upload_widget' ).style.display = "none";
+                    document.querySelector( '#id_imageUrl' ).value = result.info.secure_url;
                 }
             };
-            let myWidget = cloudinary.createUploadWidget(config, afterUpload);
-            document.querySelector('#upload_widget').addEventListener("click",
+            let myWidget = cloudinary.createUploadWidget( config, afterUpload );
+            document.querySelector( '#upload_widget' ).addEventListener( "click",
                 function () {
                     myWidget.open();
-                })
+                } )
         </script>
     {{/block}}
 

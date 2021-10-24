@@ -1,12 +1,13 @@
 {{#extends 'base'}}
 
-{{#block 'content'}}
-<h1>Login</h1>
-<p>Please login with your account below!</p>
-<form method="POST">
-    {{{form}}}
-    <input type="submit" class="btn btn-primary mt-3" value="login">
-</form>
-{{/block}}
+    {{#block 'content'}}
+        <h1>Login</h1>
+        <p>Please login with your account below!</p>
+        <form method="POST">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+            {{{form}}}
+            <input type="submit" class="btn btn-primary mt-3" value="login">
+        </form>
+    {{/block}}
 
 {{/extends}}
