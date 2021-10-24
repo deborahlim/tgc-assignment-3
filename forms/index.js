@@ -228,6 +228,18 @@ const createGenreForm = () => {
     } )
 }
 
+const createTagForm = () => {
+    return forms.create( {
+        name: fields.string( {
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label" ]
+            }
+        } )
+    } )
+}
+
 
 
 module.exports = {
@@ -237,5 +249,6 @@ module.exports = {
     createLoginForm,
     createAuthorForm,
     createPublisherForm,
-    createGenreForm
+    createGenreForm,
+    createTagForm
 }
