@@ -32,7 +32,9 @@ router.get( "/", async ( req, res ) => {
         }
     } )
 } )
-
+const {
+    checkIfAuthenticated
+} = require( "../middlewares" )
 router.get( "/register", async ( req, res ) => {
     let allRoles = await dataLayer.getAllRoles()
     const registerForm = registerUserForm( allRoles );
@@ -177,7 +179,21 @@ router.post( "/:user_id/account/update", async ( req, res ) => {
 
 } )
 
+router.get( "/:user_id/delete", checkIfAuthenticated, async ( req, res ) => {
+    // fetch the user that we want to delete
+    const user = await dataLayer.getUserById( req.params.user_id )
 
+    res.render( "users/delete", {
+        user: user.toJSON()
+    } )
+} )
+
+router.post( "/:user_id/delete", checkIfAuthenticated, async ( req, res ) => {
+    // fetch the user that we want to delete
+    const user = await dataLayer.getUserById( req.params.user_id )
+    await user.destroy();
+    res.redirect( "/users" );
+} )
 
 router.get( "/logout", async ( req, res ) => {
     req.session.user = null;
