@@ -17,17 +17,27 @@ const {
 const {
     registerUserForm,
     bootstrapField,
-    createLoginForm
+    createLoginForm,
+    createUpdateUserForm
 } = require( '../forms' );
+
+router.get( "/", async ( req, res ) => {
+    let users = await User.collection().fetch( {
+        withRelated: [ "roles" ]
+    } );
+    res.render( "users/index", {
+        users: users.toJSON(),
+        active: {
+            User: true
+        }
+    } )
+} )
 
 router.get( "/register", async ( req, res ) => {
     let allRoles = await dataLayer.getAllRoles()
     const registerForm = registerUserForm( allRoles );
     res.render( "users/register", {
         form: registerForm.toHTML( bootstrapField ),
-        active: {
-            Register: true
-        }
     } )
 } )
 
@@ -67,13 +77,21 @@ router.post( "/login", async ( req, res ) => {
             } ).fetch( {
                 require: false,
             } );
+
+            console.log( user )
             if ( !user ) {
+                // console.log( "User does not exist" )
                 req.flash(
                     "error_messages",
                     "Sorry, the authentication details you have provided does not work"
                 );
+                res.redirect( "/users/login" )
             } else {
+                console.log( "User Exists" )
                 if ( user.get( "password" ) === getHashedPassword( form.data.password ) ) {
+                    console.log( user.get( "password" ) );
+                    console.log( "HI" )
+                    console.log( getHashedPassword( form.data.password ) )
                     req.session.user = {
                         id: user.get( "id" ),
                         username: user.get( "username" ),
@@ -84,8 +102,9 @@ router.post( "/login", async ( req, res ) => {
                         "Welcome back, " + user.get( "username" )
                     );
                     console.log( "LOGIN REQUEST = ", req.session );
-                    res.redirect( "/users/profile" );
+                    res.redirect( `/users/${user.id}/account` );
                 } else {
+                    // console.log( "Password is not correct" )
                     req.flash(
                         "error_messages",
                         "Sorry, the authentication details you provided does not work"
@@ -106,12 +125,59 @@ router.post( "/login", async ( req, res ) => {
     } );
 } );
 
-router.get( "/profile", async ( req, res ) => {
-    let user = req.session.user;
-    res.render( "users/profile", {
-        user: user
+
+router.get( "/:user_id/account", async ( req, res ) => {
+    let user = await dataLayer.getUserById( req.params.user_id );
+    console.log( user )
+    res.render( "users/account", {
+        user: user.toJSON()
     } )
 } )
+
+router.get( "/:user_id/account/update", async ( req, res ) => {
+    let user = await dataLayer.getUserById( req.params.user_id );
+    let updateForm = createUpdateUserForm();
+    updateForm.fields.username.value = user.get( "username" )
+    updateForm.fields.email.value = user.get( "email" )
+    res.render( "users/update", {
+        user: user.toJSON(),
+        form: updateForm.toHTML( bootstrapField )
+    } )
+} )
+
+router.post( "/:user_id/account/update", async ( req, res ) => {
+    let user = await dataLayer.getUserById( req.params.user_id );
+    let updateForm = createUpdateUserForm();
+    updateForm.handle( req, {
+        success: async ( form ) => {
+            if ( getHashedPassword( form.data.old_password ) !== user.get( "password" ) ) {
+                req.flash( "error_messages", "Your old password is incorrect. Please try again." )
+                res.redirect( `/users/${req.params.user_id}/account/update` )
+            } else {
+                user.set( "username", form.data.username );
+                user.set( "email", form.data.email );
+                user.set( "password", getHashedPassword( form.data.new_password ) );
+                await user.save()
+                req.flash( "success_messages", `Your account details has been updated` )
+                res.redirect( `/users/${user.id}/account` );
+            }
+
+        },
+        error: async ( form ) => {
+            req.flash(
+                "error_messages",
+                "There are some problems with updating your account details. Please fill in the form again."
+            );
+            res.render( "users/update", {
+                user: user.toJSON(),
+                form: updateForm.toHTML( bootstrapField )
+            } )
+        }
+    } )
+
+} )
+
+
 
 router.get( "/logout", async ( req, res ) => {
     req.session.user = null;

@@ -136,41 +136,83 @@ const registerUserForm = ( roles ) => {
             required: true,
             errorAfterField: true,
             cssClasses: {
-                label: [ "form-label" ],
+                label: [ "form-label mt-3" ],
             },
         } ),
         email: fields.string( {
             required: true,
             errorAfterField: true,
             cssClasses: {
-                label: [ "form-label" ],
+                label: [ "form-label mt-3" ],
             },
         } ),
         password: fields.password( {
             required: true,
             errorAfterField: true,
             cssClasses: {
-                label: [ "form-label" ],
+                label: [ "form-label mt-3" ],
             },
         } ),
         confirm_password: fields.password( {
             required: true,
             errorAfterField: true,
             cssClasses: {
-                label: [ "form-label" ],
+                label: [ "form-label mt-3" ],
             },
             validators: [ validators.matchField( "password" ) ],
         } ),
         role_id: fields.password( {
+            label: "Role",
             required: true,
             errorAfterField: true,
             cssClasses: {
-                label: [ "form-label" ],
+                label: [ "form-label mt-3" ],
             },
             widget: widgets.select(),
             choices: roles
         } )
     } );
+}
+
+const createUpdateUserForm = () => {
+    return forms.create( {
+        username: fields.string( {
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ],
+            },
+        } ),
+        email: fields.string( {
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ],
+            },
+        } ),
+        old_password: fields.password( {
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ],
+            },
+        } ),
+        new_password: fields.password( {
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ],
+            },
+        } ),
+        new_confirm_password: fields.password( {
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ],
+            },
+            validators: [ validators.matchField( "new_password" ) ],
+        } ),
+    } )
 }
 
 const createLoginForm = () => {
@@ -179,14 +221,14 @@ const createLoginForm = () => {
             required: true,
             errorAfterField: true,
             cssClasses: {
-                label: [ "form-label" ],
+                label: [ "form-label mt-3" ],
             },
         } ),
         password: fields.password( {
             required: true,
             errorAfterField: true,
             cssClasses: {
-                label: [ "form-label" ],
+                label: [ "form-label mt-3" ],
             },
         } ),
     } )
@@ -210,7 +252,7 @@ const createPublisherForm = () => {
             required: true,
             errorAfterField: true,
             cssClasses: {
-                label: [ "form-label" ]
+                label: [ "form-label mt-3" ]
             }
         } )
     } )
@@ -222,7 +264,7 @@ const createGenreForm = () => {
             required: true,
             errorAfterField: true,
             cssClasses: {
-                label: [ "form-label" ]
+                label: [ "form-label mt-3" ]
             }
         } )
     } )
@@ -234,11 +276,12 @@ const createTagForm = () => {
             required: true,
             errorAfterField: true,
             cssClasses: {
-                label: [ "form-label" ]
+                label: [ "form-label mt-3" ]
             }
         } )
     } )
 }
+
 
 
 
@@ -250,5 +293,6 @@ module.exports = {
     createAuthorForm,
     createPublisherForm,
     createGenreForm,
-    createTagForm
+    createTagForm,
+    createUpdateUserForm
 }
