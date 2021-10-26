@@ -21,7 +21,12 @@ const {
     createUpdateUserForm
 } = require( '../forms' );
 
-router.get( "/", async ( req, res ) => {
+const {
+    checkIfAuthenticated,
+    checkRoles
+} = require( "../middlewares" )
+
+router.get( "/", checkIfAuthenticated, async ( req, res ) => {
     let users = await User.collection().fetch( {
         withRelated: [ "roles" ]
     } );
@@ -32,10 +37,8 @@ router.get( "/", async ( req, res ) => {
         }
     } )
 } )
-const {
-    checkIfAuthenticated
-} = require( "../middlewares" )
-router.get( "/register", async ( req, res ) => {
+
+router.get( "/register", checkIfAuthenticated, checkRoles( [ 'Owner' ] ), async ( req, res ) => {
     let allRoles = await dataLayer.getAllRoles()
     const registerForm = registerUserForm( allRoles );
     res.render( "users/register", {
@@ -43,7 +46,7 @@ router.get( "/register", async ( req, res ) => {
     } )
 } )
 
-router.post( '/register', async ( req, res ) => {
+router.post( '/register', checkIfAuthenticated, checkRoles( [ 'Owner' ] ), async ( req, res ) => {
     let allRoles = await dataLayer.getAllRoles()
     const registerForm = registerUserForm( allRoles );
     registerForm.handle( req, {
@@ -78,9 +81,10 @@ router.post( "/login", async ( req, res ) => {
                 email: form.data.email,
             } ).fetch( {
                 require: false,
+                withRelated: [ "roles" ]
             } );
 
-            console.log( user )
+            // console.log( user.toJSON() )
             if ( !user ) {
                 // console.log( "User does not exist" )
                 req.flash(
@@ -89,22 +93,22 @@ router.post( "/login", async ( req, res ) => {
                 );
                 res.redirect( "/users/login" )
             } else {
-                console.log( "User Exists" )
+                // console.log( "User Exists" )
                 if ( user.get( "password" ) === getHashedPassword( form.data.password ) ) {
-                    console.log( user.get( "password" ) );
-                    console.log( "HI" )
-                    console.log( getHashedPassword( form.data.password ) )
+                    // console.log( req.session.user )
                     req.session.user = {
                         id: user.get( "id" ),
                         username: user.get( "username" ),
                         email: user.get( "email" ),
+                        role: user.related( "roles" ).toJSON()
                     };
                     req.flash(
                         "success_messages",
                         "Welcome back, " + user.get( "username" )
                     );
-                    console.log( "LOGIN REQUEST = ", req.session );
-                    res.redirect( `/users/${user.id}/account` );
+                    // console.log( "LOGIN REQUEST = ", req.session );
+                    // console.log( "THE USER IS: ", req.session.user )
+                    res.redirect( `/books` );
                 } else {
                     // console.log( "Password is not correct" )
                     req.flash(
@@ -128,15 +132,15 @@ router.post( "/login", async ( req, res ) => {
 } );
 
 
-router.get( "/:user_id/account", async ( req, res ) => {
+router.get( "/:user_id/account", checkIfAuthenticated, async ( req, res ) => {
     let user = await dataLayer.getUserById( req.params.user_id );
-    console.log( user )
+    // console.log( user.toJSON() )
     res.render( "users/account", {
         user: user.toJSON()
     } )
 } )
 
-router.get( "/:user_id/account/update", async ( req, res ) => {
+router.get( "/:user_id/account/update", checkIfAuthenticated, async ( req, res ) => {
     let user = await dataLayer.getUserById( req.params.user_id );
     let updateForm = createUpdateUserForm();
     updateForm.fields.username.value = user.get( "username" )
@@ -147,7 +151,7 @@ router.get( "/:user_id/account/update", async ( req, res ) => {
     } )
 } )
 
-router.post( "/:user_id/account/update", async ( req, res ) => {
+router.post( "/:user_id/account/update", checkIfAuthenticated, async ( req, res ) => {
     let user = await dataLayer.getUserById( req.params.user_id );
     let updateForm = createUpdateUserForm();
     updateForm.handle( req, {
@@ -179,7 +183,7 @@ router.post( "/:user_id/account/update", async ( req, res ) => {
 
 } )
 
-router.get( "/:user_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/:user_id/delete", checkIfAuthenticated, checkRoles( [ 'Owner' ] ), async ( req, res ) => {
     // fetch the user that we want to delete
     const user = await dataLayer.getUserById( req.params.user_id )
 
@@ -188,14 +192,14 @@ router.get( "/:user_id/delete", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.post( "/:user_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/:user_id/delete", checkIfAuthenticated, checkRoles( [ 'Owner' ] ), async ( req, res ) => {
     // fetch the user that we want to delete
     const user = await dataLayer.getUserById( req.params.user_id )
     await user.destroy();
     res.redirect( "/users" );
 } )
 
-router.get( "/logout", async ( req, res ) => {
+router.get( "/logout", checkIfAuthenticated, async ( req, res ) => {
     req.session.user = null;
     req.flash( 'success_messages', "Goodbye" );
     res.redirect( "/users/login" );

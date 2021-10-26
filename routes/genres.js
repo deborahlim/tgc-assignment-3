@@ -10,7 +10,8 @@ const {
 } = require( "../forms" );
 
 const {
-    checkIfAuthenticated
+    checkIfAuthenticated,
+    checkRoles
 } = require( "../middlewares" )
 const dataLayer = require( "../dal/books" )
 
@@ -27,14 +28,14 @@ router.get( "/", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/create", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     let genreForm = createGenreForm()
     res.render( "genres/create", {
         form: genreForm.toHTML( bootstrapField )
     } )
 } )
 
-router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     let genreForm = createGenreForm()
     genreForm.handle( req, {
         success: async ( form ) => {
@@ -52,7 +53,7 @@ router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/:genre_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/:genre_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     // fetch the genre that we want to delete
     const genre = await dataLayer.getGenreById( req.params.genre_id )
 
@@ -62,7 +63,7 @@ router.get( "/:genre_id/delete", checkIfAuthenticated, async ( req, res ) => {
 } )
 
 
-router.post( "/:genre_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/:genre_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     const genre = await dataLayer.getGenreById( req.params.genre_id )
     await genre.destroy()
     res.redirect( "/genres" )

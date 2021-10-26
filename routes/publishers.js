@@ -10,7 +10,8 @@ const {
 } = require( "../forms" );
 
 const {
-    checkIfAuthenticated
+    checkIfAuthenticated,
+    checkRoles
 } = require( "./../middlewares" )
 const dataLayer = require( "./../dal/books" )
 
@@ -27,14 +28,14 @@ router.get( "/", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/create", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     let publisherForm = createPublisherForm()
     res.render( "publishers/create", {
         form: publisherForm.toHTML( bootstrapField )
     } )
 } )
 
-router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     let publisherForm = createPublisherForm()
     publisherForm.handle( req, {
         success: async ( form ) => {
@@ -52,7 +53,7 @@ router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/:publisher_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/:publisher_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     // fetch the publisher that we want to delete
     const publisher = await dataLayer.getPublisherById( req.params.publisher_id )
 
@@ -62,7 +63,7 @@ router.get( "/:publisher_id/delete", checkIfAuthenticated, async ( req, res ) =>
 } )
 
 
-router.post( "/:publisher_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/:publisher_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     const publisher = await dataLayer.getPublisherById( req.params.publisher_id )
     await publisher.destroy()
     res.redirect( "/publishers" )

@@ -1,13 +1,16 @@
-const express = require("express");
-const cloudinary = require("cloudinary");
+const express = require( "express" );
+const cloudinary = require( "cloudinary" );
 const router = express.Router();
 
+const {
+    checkIfAuthenticated,
+    checkRoles
+} = require( "../middlewares" )
 
 
-
-router.get("/sign", async (req, res) => {
+router.get( "/sign", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     // retrieve the parameters we need to send to cloudinary
-    const params_to_sign = JSON.parse(req.query.params_to_sign);
+    const params_to_sign = JSON.parse( req.query.params_to_sign );
 
     // retrieve our cloudinary api secret from the environment
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
@@ -18,7 +21,7 @@ router.get("/sign", async (req, res) => {
         apiSecret
     );
 
-    res.send(signature);
-});
+    res.send( signature );
+} );
 
 module.exports = router;

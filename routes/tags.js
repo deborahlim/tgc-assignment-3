@@ -10,7 +10,8 @@ const {
 } = require( "../forms" );
 
 const {
-    checkIfAuthenticated
+    checkIfAuthenticated,
+    checkRoles
 } = require( "../middlewares" )
 const dataLayer = require( "../dal/books" )
 
@@ -27,14 +28,14 @@ router.get( "/", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/create", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     let tagForm = createTagForm()
     res.render( "tags/create", {
         form: tagForm.toHTML( bootstrapField )
     } )
 } )
 
-router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     let tagForm = createTagForm()
     tagForm.handle( req, {
         success: async ( form ) => {
@@ -52,7 +53,7 @@ router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/:tag_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/:tag_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     // fetch the tag that we want to delete
     const tag = await dataLayer.getTagById( req.params.tag_id )
 
@@ -62,7 +63,7 @@ router.get( "/:tag_id/delete", checkIfAuthenticated, async ( req, res ) => {
 } )
 
 
-router.post( "/:tag_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/:tag_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     const tag = await dataLayer.getTagById( req.params.tag_id )
     await tag.destroy()
     res.redirect( "/tags" )

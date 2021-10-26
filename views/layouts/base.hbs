@@ -15,6 +15,7 @@
 
   <body>
     <div class="">
+      {{#if user}}
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="#" class="me-3">Book Shop</a>
@@ -56,12 +57,12 @@
                 aria-current="page">My
                 Account</a>
               <div class="">{{#if user}}
-                  Hi,
-                  {{user.username}}
+                <span>Hi,
+                  {{user.username}}</span>  
                   <a href="/users/logout" class="ms-3 btn btn-light btn-sm">Log Out</a>
 
                 {{else}}
-                  Hi, stranger
+                <span class="pt-2">Hi, stranger</span>   
                   <a href="/users/login" class="ms-3 btn btn-light btn-sm">Log In</a>
                 {{/if}}</div>
 
@@ -70,6 +71,7 @@
 
         </div>
       </nav>
+      {{/if}}
     </div>
     <div class="">
       {{#if success_messages }}

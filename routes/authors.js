@@ -10,7 +10,8 @@ const {
 } = require( "../forms" );
 
 const {
-    checkIfAuthenticated
+    checkIfAuthenticated,
+    checkRoles
 } = require( "./../middlewares" )
 const dataLayer = require( "./../dal/books" )
 
@@ -27,14 +28,14 @@ router.get( "/", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/create", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     let authorForm = createAuthorForm()
     res.render( "authors/create", {
         form: authorForm.toHTML( bootstrapField )
     } )
 } )
 
-router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     let authorForm = createAuthorForm()
     authorForm.handle( req, {
         success: async ( form ) => {
@@ -52,7 +53,7 @@ router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/:author_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/:author_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     // fetch the author that we want to delete
     const author = await dataLayer.getAuthorById( req.params.author_id )
 
@@ -62,7 +63,7 @@ router.get( "/:author_id/delete", checkIfAuthenticated, async ( req, res ) => {
 } )
 
 
-router.post( "/:author_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/:author_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     const author = await dataLayer.getAuthorById( req.params.author_id )
     await author.destroy()
     res.redirect( "/authors" )

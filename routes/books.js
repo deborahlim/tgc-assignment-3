@@ -15,7 +15,8 @@ const {
     Author
 } = require( "../models" )
 const {
-    checkIfAuthenticated
+    checkIfAuthenticated,
+    checkRoles
 } = require( "./../middlewares" );
 const dataLayer = require( "../dal/books" )
 
@@ -37,7 +38,7 @@ router.get( "/", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/create", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
 
     const allFormats = await dataLayer.getAllRelated( Format )
     const allGenres = await dataLayer.getAllRelated( Genre )
@@ -57,7 +58,7 @@ router.get( "/create", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     const allFormats = await dataLayer.getAllRelated( Format )
     const allGenres = await dataLayer.getAllRelated( Genre )
     const allPublishers = await dataLayer.getAllRelated( Publisher )
@@ -100,7 +101,7 @@ router.post( "/create", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/:book_id/update", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/:book_id/update", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     const allFormats = await dataLayer.getAllRelated( Format )
     const allGenres = await dataLayer.getAllRelated( Genre )
     const allPublishers = await dataLayer.getAllRelated( Publisher )
@@ -134,7 +135,7 @@ router.get( "/:book_id/update", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.post( "/:book_id/update", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/:book_id/update", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     const allFormats = await dataLayer.getAllRelated( Format )
     const allGenres = await dataLayer.getAllRelated( Genre )
     const allPublishers = await dataLayer.getAllRelated( Publisher )
@@ -188,7 +189,7 @@ router.post( "/:book_id/update", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.get( "/:book_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.get( "/:book_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     // fetch the book that we want to delete
     const book = await dataLayer.getBookById( req.params.book_id )
 
@@ -197,7 +198,7 @@ router.get( "/:book_id/delete", checkIfAuthenticated, async ( req, res ) => {
     } )
 } )
 
-router.post( "/:book_id/delete", checkIfAuthenticated, async ( req, res ) => {
+router.post( "/:book_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     // fetch the book that we want to delete
     const book = await dataLayer.getBookById( req.params.book_id )
     await book.destroy();
