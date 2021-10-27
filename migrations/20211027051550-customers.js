@@ -15,7 +15,7 @@ exports.setup = function ( options, seedLink ) {
 };
 
 exports.up = function ( db ) {
-  return db.createTable( "users", {
+  return db.createTable( "customers", {
     id: {
       type: "int",
       primaryKey: true,
@@ -34,11 +34,19 @@ exports.up = function ( db ) {
       type: "string",
       length: 80
     },
+    contactNumber: {
+      type: "string",
+      length: 15,
+    },
+    address: {
+      type: "string",
+      length: 100,
+    },
   } );
 };
 
 exports.down = function ( db ) {
-  return db.dropTable( "users" );
+  return db.dropTable( "customers" );
 };
 
 exports._meta = {
