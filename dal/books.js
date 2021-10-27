@@ -6,6 +6,9 @@ const {
     Tag
 } = require( "../models" )
 
+const getAllBooks = async () => {
+    return await Book.fetchAll()
+}
 const getAllRelated = async ( model ) => {
     return await model.fetchAll().map( ( row ) => {
         return [ row.get( "id" ), row.get( "name" ) ]
@@ -54,6 +57,7 @@ const getTagById = async ( tagId ) => {
 }
 
 module.exports = {
+    getAllBooks,
     getAllRelated,
     getBookById,
     getAuthorById,

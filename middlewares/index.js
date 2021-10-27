@@ -1,7 +1,7 @@
 const {
     Model
 } = require( "bookshelf" );
-
+const jwt = require( 'jsonwebtoken' );
 const checkIfAuthenticated = ( req, res, next ) => {
     if ( req.session.user ) {
         next()
@@ -11,6 +11,24 @@ const checkIfAuthenticated = ( req, res, next ) => {
     }
 }
 
+const checkIfAuthenticatedJWT = ( req, res, next ) => {
+    const authHeader = req.headers.authorization;
+
+    if ( authHeader ) {
+        const token = authHeader.split( ' ' )[ 1 ];
+
+        jwt.verify( token, process.env.TOKEN_SECRET, ( err, customer ) => {
+            if ( err ) {
+                return res.sendStatus( 403 );
+            }
+
+            req.customer = customer;
+            next();
+        } );
+    } else {
+        res.sendStatus( 401 );
+    }
+};
 
 const checkRoles = ( userRoles ) => {
     return ( req, res, next ) => {
@@ -27,5 +45,6 @@ const checkRoles = ( userRoles ) => {
 
 module.exports = {
     checkIfAuthenticated,
-    checkRoles
+    checkRoles,
+    checkIfAuthenticatedJWT
 }

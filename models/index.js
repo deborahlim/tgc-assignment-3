@@ -80,6 +80,10 @@ const CartItem = bookshelf.model( "CartItem", {
 
 } )
 
+const Customer = bookshelf.model( "Customer", {
+    tableName: "customers",
+} )
+
 module.exports = {
     Book,
     Format,
@@ -89,5 +93,6 @@ module.exports = {
     Author,
     User,
     Role,
-    CartItem
+    CartItem,
+    Customer
 }

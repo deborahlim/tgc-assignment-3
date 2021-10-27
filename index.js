@@ -51,7 +51,16 @@ app.use( function ( req, res, next ) {
     next();
 } )
 // enable protection from cross site request forgery
-app.use( csrf() );
+// app.use( csrf() );
+const csrfInstance = csrf();
+app.use( function ( req, res, next ) {
+    // exclude /checkout/process_payment for CSRF
+    if ( req.url.slice( 0, 5 ) == "/api/" ) {
+        return next()
+    }
+    csrfInstance( req, res, next )
+} )
+
 // handle CSRF error
 app.use( function ( err, req, res, next ) {
     if ( err && err.code == "EBADCSRFTOKEN" ) {
@@ -78,6 +87,14 @@ const authorRoutes = require( "./routes/authors" );
 const publisherRoutes = require( "./routes/publishers" );
 const genreRoutes = require( "./routes/genres" );
 const tagRoutes = require( "./routes/tags" );
+const {
+    getAllBooks
+} = require( "./dal/books" );
+const api = {
+    books: require( "./routes/api/books" ),
+    customers: require( "./routes/api/customers" )
+}
+
 async function main() {
     app.use( "/", landingRoutes );
     app.use( "/books", booksRoutes );
@@ -87,6 +104,8 @@ async function main() {
     app.use( "/publishers", publisherRoutes );
     app.use( "/genres", genreRoutes );
     app.use( "/tags", tagRoutes );
+    app.use( "/api/books", express.json(), api.books )
+    app.use( "/api/customers", express.json(), api.customers )
 
 
 }
