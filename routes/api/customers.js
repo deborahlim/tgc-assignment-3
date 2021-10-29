@@ -2,7 +2,9 @@ const express = require( 'express' )
 const router = express.Router()
 const crypto = require( 'crypto' )
 const jwt = require( 'jsonwebtoken' )
-
+const {
+    errorResponse
+} = require( "./../../utils/errorResponse" )
 const {
     Customer
 } = require( "../../models" )
@@ -34,11 +36,34 @@ const getHashedPassword = ( password ) => {
 }
 
 router.post( "/register", async ( req, res ) => {
-    // console.log( req.body )
-    await customerDataLayer.createNewCustomer( req.body );
-    res.send( {
-        message: "Success"
-    } )
+    let checkEmail = await Customer.where( {
+        email: req.body.email
+    } ).fetch( {
+        require: false
+    } );
+
+    let checkUsername = await Customer.where( {
+        username: req.body.username
+    } ).fetch( {
+        require: false
+    } );
+
+    if ( !checkEmail && !checkUsername ) {
+        await customerDataLayer.createNewCustomer( req.body );
+        res.send( {
+            message: "Success"
+        } )
+    } else if ( checkEmail && checkUsername ) {
+        return errorResponse(
+            res,
+            "The email and username provided already exists",
+            401
+        );
+    } else if ( checkEmail )
+        return errorResponse( res, "The email provided already exists", 406 );
+
+    else if ( checkValidUsername !== null )
+        return errorResponse( res, "The username provided already exists", 409 );
 } )
 
 router.post( '/login', async ( req, res ) => {
@@ -54,10 +79,9 @@ router.post( '/login', async ( req, res ) => {
             accessToken
         } )
     } else {
-        res.send( {
-            'error': 'Wrong email or password'
-        } )
+        return errorResponse( res, "Your login credentials are incorrect", 401 );
     }
+
 } )
 
 router.get( '/profile', checkIfAuthenticatedJWT, async ( req, res ) => {

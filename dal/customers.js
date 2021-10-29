@@ -9,6 +9,9 @@ const getHashedPassword = ( password ) => {
     return hash;
 }
 const createNewCustomer = async ( obj ) => {
+
+    console.log( getCustomerByUsername( obj.username ) )
+
     let customer = new Customer( {
         username: obj.username,
         password: getHashedPassword( obj.password ),
@@ -22,7 +25,15 @@ const createNewCustomer = async ( obj ) => {
     return customer
 }
 
+const getCustomerByUsername = async ( username ) => {
+    return await Customer.where( {
+        username: username
+    } ).fetch( {
+        require: false,
+    } )
+}
 
 module.exports = {
-    createNewCustomer
+    createNewCustomer,
+    getCustomerByUsername
 }
