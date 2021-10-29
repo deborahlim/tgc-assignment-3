@@ -2,6 +2,7 @@ const express = require( 'express' )
 const router = express.Router()
 const crypto = require( 'crypto' )
 const jwt = require( 'jsonwebtoken' )
+
 const {
     Customer
 } = require( "../../models" )
@@ -10,7 +11,6 @@ const customerDataLayer = require( '../../dal/customers' )
 const {
     checkIfAuthenticatedJWT
 } = require( '../../middlewares' )
-
 
 const generateAccessToken = ( customer ) => {
     console.log( customer )
@@ -35,7 +35,7 @@ const getHashedPassword = ( password ) => {
 
 router.post( "/register", async ( req, res ) => {
     // console.log( req.body )
-    let customer = await customerDataLayer.createNewCustomer( req.body );
+    await customerDataLayer.createNewCustomer( req.body );
     res.send( {
         message: "Success"
     } )

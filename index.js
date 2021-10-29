@@ -6,7 +6,7 @@ const session = require( 'express-session' );
 const flash = require( 'connect-flash' );
 const FileStore = require( 'session-file-store' )( session );
 const csrf = require( 'csurf' )
-
+const cors = require( 'cors' );
 // create an instance of express app
 let app = express();
 
@@ -28,6 +28,8 @@ app.use(
         extended: false
     } )
 );
+// Cors must be enabled before session
+app.use( cors() )
 
 // set up sessions
 app.use( session( {
