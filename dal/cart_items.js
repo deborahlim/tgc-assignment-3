@@ -33,7 +33,7 @@ const createCartItem = async ( customerId, bookId, quantity ) => {
 }
 
 const removeFromCart = async ( customerId, bookId ) => {
-    let cartItem = await getCartItemBycustomerAndBook( customerId, bookId );
+    let cartItem = await getCartItemByCustomerAndBook( customerId, bookId );
     if ( cartItem ) {
         await cartItem.destroy();
         return true;
@@ -42,7 +42,7 @@ const removeFromCart = async ( customerId, bookId ) => {
 }
 
 const updateQuantity = async ( customerId, bookId, newQuantity ) => {
-    let cartItem = await getCartItemBycustomerAndBook( customerId, bookId );
+    let cartItem = await getCartItemByCustomerAndBook( customerId, bookId );
     if ( cartItem ) {
         cartItem.set( 'quantity', newQuantity );
         cartItem.save();

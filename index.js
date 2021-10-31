@@ -89,12 +89,10 @@ const authorRoutes = require( "./routes/authors" );
 const publisherRoutes = require( "./routes/publishers" );
 const genreRoutes = require( "./routes/genres" );
 const tagRoutes = require( "./routes/tags" );
-const {
-    getAllBooks
-} = require( "./dal/books" );
 const api = {
     books: require( "./routes/api/books" ),
-    customers: require( "./routes/api/customers" )
+    customers: require( "./routes/api/customers" ),
+    cart: require( "./routes/api/cart" )
 }
 
 async function main() {
@@ -108,7 +106,7 @@ async function main() {
     app.use( "/tags", tagRoutes );
     app.use( "/api/books", express.json(), api.books )
     app.use( "/api/customers", express.json(), api.customers )
-
+    app.use( "/api/cart", express.json(), api.cart )
 
 }
 main();

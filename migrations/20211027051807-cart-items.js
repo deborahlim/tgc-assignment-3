@@ -36,7 +36,7 @@ exports.up = function ( db ) {
         mapping: "id",
         rules: {
           onDelete: "CASCADE",
-          onUpdate: "CASCADE",
+          onUpdate: "RESTRICT",
         },
       },
     },
@@ -61,15 +61,15 @@ exports.down = function ( db ) {
   db.removeForeignKey(
     "cart_items",
     "cart_items_customer_fk",
-    function () {
-      db.removeColumn( "cart_items", "customer_id" )
+    async function () {
+      await db.removeColumn( "cart_items", "customer_id" )
     }
   );
   db.removeForeignKey(
     "cart_items",
     "cart_items_book_fk",
-    function () {
-      db.removeColumn( "cart_items", "book_id" )
+    async function () {
+      await db.removeColumn( "cart_items", "book_id" )
     }
   );
   return db.dropTable( "cart_items" )

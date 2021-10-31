@@ -75,8 +75,9 @@ const Role = bookshelf.model( "Role", {
 const CartItem = bookshelf.model( "CartItem", {
     tableName: "cart_items",
     books() {
-        this.belongsTo( "Book" )
+        return this.belongsTo( "Book" )
     },
+
 
 } )
 
