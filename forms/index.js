@@ -130,31 +130,128 @@ const createBookForm = ( formats, genres, publishers, tags, authors ) => {
     } )
 };
 
+// Define a search form to search books
+const createSearchBooksForm = ( formats, genres, publishers, tags, authors ) => {
+    return forms.create( {
+        title: fields.string( {
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ 'form-label mt-3' ]
+            },
+        } ),
+        authors: fields.string( {
+            label: "Author(s)",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ]
+            },
+            widget: widgets.multipleSelect(),
+            choices: authors
+        } ),
+        publishedDateFrom: fields.date( {
+            label: "Published After",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ 'form-label mt-3' ]
+            },
+            validators: [ validators.date() ],
+            widget: widgets.date()
+        } ),
+        publishedDateTo: fields.date( {
+            label: "Published Before",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ 'form-label mt-3' ]
+            },
+            validators: [ validators.date() ],
+            widget: widgets.date()
+        } ),
+        min_cost: fields.number( {
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ 'form-label mt-3' ]
+            },
+        } ),
+        max_cost: fields.number( {
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ 'form-label mt-3' ]
+            },
+        } ),
+        format_id: fields.string( {
+            label: "Format",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ]
+            },
+            widget: widgets.select(),
+            choices: formats
+        } ),
+        genre_id: fields.string( {
+            label: "Genre",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ]
+            },
+            widget: widgets.select(),
+            choices: genres
+        } ),
+        publisher_id: fields.string( {
+            label: "Publisher",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ]
+            },
+            widget: widgets.select(),
+            choices: publishers
+        } ),
+        tags: fields.string( {
+            label: "Tag(s)",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ]
+            },
+            widget: widgets.multipleSelect(),
+            choices: tags
+        } )
+    } )
+};
+
 const registerUserForm = ( roles ) => {
     return forms.create( {
         username: fields.string( {
-            required: true,
+            required: false,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
         } ),
         email: fields.string( {
-            required: true,
+            required: false,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
         } ),
         password: fields.password( {
-            required: true,
+            required: false,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
         } ),
         confirm_password: fields.password( {
-            required: true,
+            required: false,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
@@ -163,7 +260,7 @@ const registerUserForm = ( roles ) => {
         } ),
         role_id: fields.password( {
             label: "Role",
-            required: true,
+            required: false,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
@@ -294,5 +391,6 @@ module.exports = {
     createPublisherForm,
     createGenreForm,
     createTagForm,
-    createUpdateUserForm
+    createUpdateUserForm,
+    createSearchBooksForm
 }

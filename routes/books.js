@@ -2,6 +2,7 @@ const express = require( "express" );
 const {
     createBookForm,
     bootstrapField,
+    createSearchBooksForm
 } = require( "../forms" );
 const router = express.Router();
 
@@ -21,20 +22,106 @@ const {
 const dataLayer = require( "../dal/books" )
 
 router.get( "/", checkIfAuthenticated, async ( req, res ) => {
-    // #2 - fetch all the Books (ie, SELECT * from Books)
-    let books = await Book.collection().fetch( {
-        withRelated: [ "genres", "formats", "publishers", "tags", "authors" ]
-    } );
-    // console.log( books.toJSON() )
-    let formattedDateBooks = books.toJSON()
-    formattedDateBooks.forEach( ( book ) => {
-        book.publishedDate = book.publishedDate.toISOString().slice( 0, 10 );
-    } )
-    res.render( 'books/index', {
-        books: formattedDateBooks,
-        active: {
-            Books: true
-        } // #3 - convert collection to JSON
+
+    const allFormats = await dataLayer.getAllRelated( Format )
+    allFormats.unshift( [ 0, "All Formats" ] );
+    const allGenres = await dataLayer.getAllRelated( Genre )
+    allGenres.unshift( [ 0, "All Genres" ] );
+    const allPublishers = await dataLayer.getAllRelated( Publisher )
+    allPublishers.unshift( [ 0, "All Publishers" ] );
+    const allTags = await dataLayer.getAllRelated( Tag )
+    const allAuthors = await dataLayer.getAllRelated( Author )
+
+    let searchForm = createSearchBooksForm( allFormats, allGenres, allPublishers, allTags, allAuthors )
+    // query builder that means "SELECT * from books". Can continue to add clauses to a query builder until we execute it with a fetch function call. 
+    let q = Book.collection();
+    searchForm.handle( req, {
+        empty: async ( form ) => {
+            let books = await q.fetch( {
+                withRelated: [ "formats", "genres", "publishers", "tags", "authors" ]
+            } )
+            // console.log( "Empty Form", books.toJSON() )
+            let formattedDateBooks = books.toJSON()
+            formattedDateBooks.forEach( ( book ) => {
+                book.publishedDate = book.publishedDate.toISOString().slice( 0, 10 );
+            } )
+            res.render( "books/index", {
+                books: formattedDateBooks,
+                form: form.toHTML( bootstrapField ),
+                active: {
+                    Books: true
+                }
+            } )
+        },
+        error: async ( form ) => {
+            let books = await q.fetch( {
+                withRelated: [ "formats", "genres", "publishers", "tags", "authors" ]
+            } )
+            // console.log( books.toJSON() )
+            let formattedDateBooks = books.toJSON()
+            formattedDateBooks.forEach( ( book ) => {
+                book.publishedDate = book.publishedDate.toISOString().slice( 0, 10 );
+            } )
+            res.render( "books/index", {
+                books: formattedDateBooks,
+                form: form.toHTML( bootstrapField ),
+                active: {
+                    Books: true
+                }
+            } )
+        },
+        success: async ( form ) => {
+            if ( form.data.title ) {
+                q = q.where( "title", "like", "%" + req.query.title + "%" )
+            }
+
+            if ( form.data.format_id && form.data.format_id !== "0" ) {
+                q = q.where( "format_id", "=", form.data.format_id )
+            }
+            if ( form.data.genre_id && form.data.genre_id !== "0" ) {
+                q = q.where( "genre_id", "=", form.data.genre_id )
+            }
+            if ( form.data.publisher_id && form.data.publisher_id !== "0" ) {
+                q = q.where( "publisher_id", "=", form.data.publisher_id )
+            }
+            if ( form.data.tags ) {
+                q = q.query( "join", "books_tags", "books.id", "book_id" ).where( "tag_id", "in", form.data.tags.split( "," ) )
+            }
+            if ( form.data.authors ) {
+                q = q.query( "join", "authors_books", "books.id", "book_id" ).where( "author_id", "in", form.data.authors.split( "," ) )
+            }
+            if ( form.data.min_cost ) {
+                q = q.where( "cost", ">=", form.data.min_cost )
+            }
+
+            if ( form.data.max_cost ) {
+                q = q.where( "cost", "<=", form.data.max_cost )
+            }
+
+            if ( form.data.publishedDateFrom ) {
+                q = q.where( "publishedDate", ">=", form.data.publishedDateFrom )
+            }
+
+            if ( form.data.publishedDateTo ) {
+                q = q.where( "publishedDate", "<=", form.data.publishedDateTo )
+            }
+            let books = await q.fetch( {
+                withRelated: [ "formats", "genres", "publishers", "tags", "authors" ]
+            } )
+            // console.log( books.toJSON() )
+            let formattedDateBooks = books.toJSON()
+            formattedDateBooks.forEach( ( book ) => {
+                book.publishedDate = book.publishedDate.toISOString().slice( 0, 10 );
+            } )
+            res.render( "books/index", {
+                books: formattedDateBooks,
+                form: form.toHTML( bootstrapField ),
+                active: {
+                    Books: true
+                }
+            } )
+
+        },
     } )
 } )
 

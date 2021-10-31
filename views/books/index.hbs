@@ -1,6 +1,12 @@
 {{#extends 'base'}}
 
     {{#block 'content'}}
+        <h1>Search By</h1>
+        <form method="GET">
+            {{{form}}}
+            <input type="submit" class="mb-3 mt-3 btn btn-primary" value="Search" />
+        </form>
+
         <h1>Books</h1>
         <a href="/books/create">Add New Book</a>
         <table class="table">
@@ -31,7 +37,7 @@
                         <td>
                             {{this.title}}
                         </td>
-                       <td>{{#each this.authors}}
+                        <td>{{#each this.authors}}
                                 <span class="">{{this.name}}</span>
                             {{/each}}
                         </td>
