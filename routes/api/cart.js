@@ -17,7 +17,7 @@ router.get( "/", async ( req, res ) => {
     } else errorResponse( res )
 } )
 
-router.get( '/add', async ( req, res ) => {
+router.get( '/add', checkIfAuthenticatedJWT, async ( req, res ) => {
     let cart = new CartServices( parseInt( req.query.customer_id ) );
     let result = await cart.addToCart( parseInt( req.query.book_id ), 1 );
     if ( result ) {
@@ -27,7 +27,7 @@ router.get( '/add', async ( req, res ) => {
     }
 } )
 
-router.get( "/remove", async ( req, res ) => {
+router.get( "/remove", checkIfAuthenticatedJWT, async ( req, res ) => {
     let cart = new CartServices( parseInt( req.query.customer_id ) );
     let result = await cart.remove( req.query.book_id );
     if ( result ) {
@@ -37,7 +37,7 @@ router.get( "/remove", async ( req, res ) => {
     }
 } )
 
-router.post( "/quantity/update", async function ( req, res ) {
+router.post( "/quantity/update", checkIfAuthenticatedJWT, async function ( req, res ) {
     let newQuantity = req.body.new_quantity;
     let cart = new CartServices( parseInt( req.body.customer_id ) );
     let status = await cart.setQuantity( req.body.book_id, newQuantity );
