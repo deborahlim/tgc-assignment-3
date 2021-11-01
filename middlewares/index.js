@@ -16,9 +16,12 @@ const checkIfAuthenticatedJWT = ( req, res, next ) => {
 
     if ( authHeader ) {
         const token = authHeader.split( ' ' )[ 1 ];
-
+        console.log( token )
         jwt.verify( token, process.env.TOKEN_SECRET, ( err, customer ) => {
+            console.log( customer )
+            console.log( token )
             if ( err ) {
+                console.log( err );
                 return res.sendStatus( 403 );
             }
 

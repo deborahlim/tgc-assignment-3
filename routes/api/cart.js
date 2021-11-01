@@ -8,7 +8,7 @@ const {
 const {
     checkIfAuthenticatedJWT
 } = require( "../../middlewares" )
-router.get( "/", async ( req, res ) => {
+router.get( "/", checkIfAuthenticatedJWT, async ( req, res ) => {
     let cart = new CartServices( parseInt( req.query.customer_id ) )
     // console.log( cart )
     let result = await cart.getCart()
