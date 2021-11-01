@@ -7,7 +7,9 @@ const {
 } = require( "../models" )
 
 const getAllBooks = async () => {
-    return await Book.fetchAll()
+    return await Book.collection().fetch( {
+        withRelated: [ "authors", "formats", "genres", "tags", "publishers" ]
+    } )
 }
 const getAllRelated = async ( model ) => {
     return await model.fetchAll().map( ( row ) => {

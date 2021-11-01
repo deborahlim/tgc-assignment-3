@@ -9,9 +9,7 @@ const booksDataLayer = require( '../../dal/books' )
 
 // Return all books
 router.get( '/', async ( req, res ) => {
-    res.send( await ( await booksDataLayer.getAllBooks() ).fetch( {
-        withRelated: [ "authors" ]
-    } ) )
+    let books = await booksDataLayer.getAllBooks()
+    res.send( books );
 } )
-
 module.exports = router;

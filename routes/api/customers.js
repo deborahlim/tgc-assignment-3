@@ -76,6 +76,7 @@ router.post( '/login', async ( req, res ) => {
     if ( customer && customer.get( 'password' ) == getHashedPassword( req.body.password ) ) {
         let accessToken = generateAccessToken( customer );
         res.send( {
+            ...customer.toJSON(),
             accessToken
         } )
     } else {
