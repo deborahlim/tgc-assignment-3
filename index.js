@@ -92,7 +92,8 @@ const tagRoutes = require( "./routes/tags" );
 const api = {
     books: require( "./routes/api/books" ),
     customers: require( "./routes/api/customers" ),
-    cart: require( "./routes/api/cart" )
+    cart: require( "./routes/api/cart" ),
+    checkout: require( "./routes/api/checkout" )
 }
 
 async function main() {
@@ -107,7 +108,7 @@ async function main() {
     app.use( "/api/books", express.json(), api.books )
     app.use( "/api/customers", express.json(), api.customers )
     app.use( "/api/cart", express.json(), api.cart )
-
+    app.use( "/api/checkout", express.json(), api.checkout )
 }
 main();
 
