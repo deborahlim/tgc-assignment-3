@@ -2,8 +2,9 @@ const express = require("express");
 const CartServices = require("../../services/cart_services");
 const router = express.Router();
 const Stripe = require("stripe")(process.env.STRIPE_KEY_SECRET);
-const bodyParser = require("body-parser");
 const { checkIfAuthenticatedJWT } = require("../../middlewares");
+const orderDataLayer = require("../../dal/orders");
+const {OrderItem}=require("../../models");
 router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
   // in stripe -- a payment object represents one transaction
   // a payment is defined by many line items
@@ -62,21 +63,22 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
   });
 });
 
+
 // webhook which Stripe will call to process the payment
-router.post('/process_payment', express.raw({"type":"application/json"}), function(req,res){
+router.post('/process_payment', express.raw({"type":"application/json"}), async function(req,res){
     // req contains data send to this endpoint from Stripe
     // and is only sent when Stripe completes a payment
     let payload = req.body;
-    console.log("PAYLOAD", payload)
+    // console.log("PAYLOAD", payload)
     // we need an endpointSecret to verify that this request is actually sent from stripes
     let endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
-    console.log("ENDPOINT SECRET= ", endpointSecret)
+    // console.log("ENDPOINT SECRET= ", endpointSecret)
     let sigHeader = req.headers['stripe-signature'];
-    console.log("SIG HEADER= ", sigHeader);
+    // console.log("SIG HEADER= ", sigHeader);
     let event;
     try {
         event = Stripe.webhooks.constructEvent(payload, sigHeader, endpointSecret);
-        console.log("EVENT", event);
+        // console.log("EVENT", event);
     } catch(e) {
         // the stripe request is invalid (i.e not from stripe)
         res.send({
@@ -87,8 +89,23 @@ router.post('/process_payment', express.raw({"type":"application/json"}), functi
     // if the stripe request is verified to be from stripe
     // then we recreate payment session
     let stripeSession = event.data.object;
+    let {id, metadata, payment_status, amount_total} = stripeSession
     if (event.type == 'checkout.session.completed') {
-        console.log(stripeSession);
+        console.log("STRIPE SESSION = " ,stripeSession);
+
+        let order = await orderDataLayer.createNewOrder(id, metadata.customer_id, payment_status, amount_total);
+        let orderObj = order.toJSON()
+        console.log("ORDER OBJECT = ", orderObj)
+        let orderItems = JSON.parse(metadata.orders);
+        console.log("ORDER ID=", orderObj.id)
+        console.log("ORDER ITEMS = ", orderItems)
+
+        orderItems.forEach( async (orderItem) =>  {
+          let item = await orderDataLayer.createNewOrderItem(orderObj.id, orderItem.book_id, orderItem.quantity)
+          console.log(item.toJSON())
+        });
+        
+      
     }
 
     res.send({'recieved': true})

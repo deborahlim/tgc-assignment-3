@@ -83,7 +83,30 @@ const CartItem = bookshelf.model( "CartItem", {
 
 const Customer = bookshelf.model( "Customer", {
     tableName: "customers",
+    orders() {
+        return this.hasMany("Order")
+    }
 } )
+
+const Order = bookshelf.model("Orders", {
+    tableName: "orders",
+    customers() {
+        return this.belongsTo("Customer")
+    },
+    orderItems() {
+        return this.hasMany("OrderItem")
+    }
+})
+
+const OrderItem = bookshelf.model("OrderItem", {
+    tableName: "order_items",
+    books() {
+        return this.belongsTo("Book")
+    },
+    orders() {
+        return this.belongsTo("Order")
+    } 
+})
 
 module.exports = {
     Book,
@@ -95,5 +118,7 @@ module.exports = {
     User,
     Role,
     CartItem,
-    Customer
+    Customer,
+    Order,
+    OrderItem
 }
