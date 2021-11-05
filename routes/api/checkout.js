@@ -92,16 +92,19 @@ router.post('/process_payment', express.raw({"type":"application/json"}), async 
     let {id, metadata, payment_status, amount_total} = stripeSession
     if (event.type == 'checkout.session.completed') {
         console.log("STRIPE SESSION = " ,stripeSession);
-
+      // create new order
         let order = await orderDataLayer.createNewOrder(id, metadata.customer_id, payment_status, amount_total);
         let orderObj = order.toJSON()
         console.log("ORDER OBJECT = ", orderObj)
         let orderItems = JSON.parse(metadata.orders);
         console.log("ORDER ID=", orderObj.id)
         console.log("ORDER ITEMS = ", orderItems)
-
+        let cartServices = new CartServices(orderObj.customer_id);
+        // add each item to order items table and remove each corresponding cart item
         orderItems.forEach( async (orderItem) =>  {
           let item = await orderDataLayer.createNewOrderItem(orderObj.id, orderItem.book_id, orderItem.quantity)
+          
+          await cartServices.remove(orderItem.book_id); 
           console.log(item.toJSON())
         });
         
