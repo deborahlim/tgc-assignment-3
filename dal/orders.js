@@ -1,7 +1,6 @@
 const {
     Order,
     OrderItem,
-    Customer
 } = require("../models")
 
 const createNewOrder = async (id, customerId, status, amountTotal) => {
@@ -31,6 +30,7 @@ const getOrder = async(customerId) => {
         customer_id: customerId
     }).fetch({
         require: false,
+        withRelated: ["orderItems"]
     });
 }
 

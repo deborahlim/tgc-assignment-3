@@ -93,6 +93,7 @@ const api = {
   customers: require("./routes/api/customers"),
   cart: require("./routes/api/cart"),
   checkout: require("./routes/api/checkout"),
+  orders: require("./routes/api/orders")
 };
 
 async function main() {
@@ -109,6 +110,7 @@ async function main() {
   app.use("/api/cart", express.json(), api.cart);
   app.use('/api/checkout/process_payment', express.raw({type: "*/*"}))
   app.use("/api/checkout", express.json(), api.checkout);
+  app.use("/api/orders", express.json(), api.orders);
 }
 main();
 
