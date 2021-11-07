@@ -30,7 +30,7 @@ const getOrder = async(customerId) => {
         customer_id: customerId
     }).fetch({
         require: false,
-        withRelated: ["orderItems"]
+        withRelated: ["orderItems.books.formats", "orderItems.books.publishers", "orderItems.books.authors"]
     });
 }
 
