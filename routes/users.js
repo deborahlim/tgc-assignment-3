@@ -1,13 +1,7 @@
 const express = require( "express" );
 const router = express.Router();
 const dataLayer = require( "../dal/users" )
-const crypto = require( 'crypto' );
-
-const getHashedPassword = ( password ) => {
-    const sha256 = crypto.createHash( 'sha256' );
-    const hash = sha256.update( password ).digest( 'base64' );
-    return hash;
-}
+const {getHashedPassword} = require("../utils/hash")
 
 // import in the User model
 const {
@@ -17,7 +11,6 @@ const {
 const {
     registerUserForm,
     bootstrapField,
-    createLoginForm,
     createUpdateUserForm
 } = require( '../forms' );
 
@@ -64,72 +57,6 @@ router.post( '/register', checkIfAuthenticated, checkRoles( [ 'Owner' ] ), async
     } )
 } )
 
-router.get( "/login", async ( req, res ) => {
-    let loginForm = createLoginForm();
-    res.render( "users/login", {
-        form: loginForm.toHTML( bootstrapField )
-    } )
-} )
-
-router.post( "/login", async ( req, res ) => {
-    const loginForm = createLoginForm();
-    loginForm.handle( req, {
-        success: async ( form ) => {
-            //process the form
-            // find the user by email and password
-            let user = await User.where( {
-                email: form.data.email,
-            } ).fetch( {
-                require: false,
-                withRelated: [ "roles" ]
-            } );
-
-            // console.log( user.toJSON() )
-            if ( !user ) {
-                // console.log( "User does not exist" )
-                req.flash(
-                    "error_messages",
-                    "Sorry, the authentication details you have provided does not work"
-                );
-                res.redirect( "/users/login" )
-            } else {
-                // console.log( "User Exists" )
-                if ( user.get( "password" ) === getHashedPassword( form.data.password ) ) {
-                    // console.log( req.session.user )
-                    req.session.user = {
-                        id: user.get( "id" ),
-                        username: user.get( "username" ),
-                        email: user.get( "email" ),
-                        role: user.related( "roles" ).toJSON()
-                    };
-                    req.flash(
-                        "success_messages",
-                        "Welcome back, " + user.get( "username" )
-                    );
-                    // console.log( "LOGIN REQUEST = ", req.session );
-                    // console.log( "THE USER IS: ", req.session.user )
-                    res.redirect( `/books` );
-                } else {
-                    // console.log( "Password is not correct" )
-                    req.flash(
-                        "error_messages",
-                        "Sorry, the authentication details you provided does not work"
-                    );
-                    res.redirect( "/users/login" );
-                }
-            }
-        },
-        error: ( form ) => {
-            req.flash(
-                "error_messages",
-                "There are some problems with logging you in. Please fill in the form again."
-            );
-            res.render( "users/login", {
-                form: form.toHTML( bootstrapField ),
-            } );
-        },
-    } );
-} );
 
 
 router.get( "/:user_id/account", checkIfAuthenticated, async ( req, res ) => {
@@ -202,7 +129,7 @@ router.post( "/:user_id/delete", checkIfAuthenticated, checkRoles( [ 'Owner' ] )
 router.get( "/logout", checkIfAuthenticated, async ( req, res ) => {
     req.session.user = null;
     req.flash( 'success_messages', "Goodbye" );
-    res.redirect( "/users/login" );
+    res.redirect( "/" );
 } )
 
 module.exports =

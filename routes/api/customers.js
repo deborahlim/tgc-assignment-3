@@ -1,6 +1,6 @@
 const express = require( 'express' )
 const router = express.Router()
-const crypto = require( 'crypto' )
+const {getHashedPassword} = require("../../utils/hash")
 const jwt = require( 'jsonwebtoken' )
 const {
     errorResponse
@@ -27,12 +27,6 @@ const generateAccessToken = ( customer ) => {
     }, process.env.TOKEN_SECRET, {
         expiresIn: "1h"
     } );
-}
-
-const getHashedPassword = ( password ) => {
-    const sha256 = crypto.createHash( 'sha256' );
-    const hash = sha256.update( password ).digest( 'base64' );
-    return hash;
 }
 
 router.post( "/register", async ( req, res ) => {
