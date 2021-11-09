@@ -46,7 +46,7 @@ const createBookForm = ( formats, genres, publishers, tags, authors ) => {
                 label: [ "form-label mt-3" ]
             },
             widget: widgets.multipleSelect(),
-            choices: authors
+            choices: authors,
         } ),
         publishedDate: fields.date( {
             required: true,
@@ -54,7 +54,7 @@ const createBookForm = ( formats, genres, publishers, tags, authors ) => {
             cssClasses: {
                 label: [ 'form-label mt-3' ]
             },
-            validators: [ validators.date() ],
+            validators: [ validators.date()],
             widget: widgets.date()
         } ),
         stock: fields.number( {
@@ -63,7 +63,7 @@ const createBookForm = ( formats, genres, publishers, tags, authors ) => {
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
-            validators: [ validators.integer() ]
+            validators: [ validators.integer()]
         } ),
         cost: fields.number( {
             required: true,
@@ -71,13 +71,15 @@ const createBookForm = ( formats, genres, publishers, tags, authors ) => {
             cssClasses: {
                 label: [ 'form-label mt-3' ]
             },
+            validators: [ validators.range(0.01, 1000.00)],
         } ),
         description: fields.string( {
             required: true,
             errorAfterField: true,
             cssClasses: {
                 label: [ 'form-label mt-3' ]
-            }
+            },
+            validators: [validators.maxlength(300)],
         } ),
         format_id: fields.string( {
             label: "Format",
@@ -87,7 +89,7 @@ const createBookForm = ( formats, genres, publishers, tags, authors ) => {
                 label: [ "form-label mt-3" ]
             },
             widget: widgets.select(),
-            choices: formats
+            choices: formats,
         } ),
         genre_id: fields.string( {
             label: "Genre",
@@ -97,7 +99,7 @@ const createBookForm = ( formats, genres, publishers, tags, authors ) => {
                 label: [ "form-label mt-3" ]
             },
             widget: widgets.select(),
-            choices: genres
+            choices: genres,
         } ),
         publisher_id: fields.string( {
             label: "Publisher",
@@ -107,26 +109,29 @@ const createBookForm = ( formats, genres, publishers, tags, authors ) => {
                 label: [ "form-label mt-3" ]
             },
             widget: widgets.select(),
-            choices: publishers
+            choices: publishers,
         } ),
         tags: fields.string( {
             label: "Tag(s)",
-            required: true,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ]
             },
             widget: widgets.multipleSelect(),
-            choices: tags
+            choices: tags,
+            validators: [],
         } ),
         imageUrl: fields.url( {
             errorAfterField: true,
+            required: true,
             cssClasses: {
                 label: [ 'form-label mt-3' ]
             },
             widget: widgets.hidden(),
             validators: [ validators.url() ],
         } )
+    }, {
+        validatePastFirstError: true
     } )
 };
 
@@ -151,7 +156,7 @@ const createSearchBooksForm = ( formats, genres, publishers, tags, authors ) => 
             choices: authors
         } ),
         publishedDateFrom: fields.date( {
-            label: "Published After",
+            label: "Published Date Range",
             required: false,
             errorAfterField: true,
             cssClasses: {
@@ -161,28 +166,32 @@ const createSearchBooksForm = ( formats, genres, publishers, tags, authors ) => 
             widget: widgets.date()
         } ),
         publishedDateTo: fields.date( {
-            label: "Published Before",
+            label: "to",
             required: false,
             errorAfterField: true,
             cssClasses: {
-                label: [ 'form-label mt-3' ]
+                label: [ 'form-label mb-0 fw-normal' ]
             },
             validators: [ validators.date() ],
             widget: widgets.date()
         } ),
         min_cost: fields.number( {
+            label: "Price Range",
             required: false,
             errorAfterField: true,
             cssClasses: {
                 label: [ 'form-label mt-3' ]
             },
+            validators: [validators.regexp(/^[0-9]*(\.[0-9]{0,2})?$/, "Enter a positive number up to 2 decimal places")]
         } ),
         max_cost: fields.number( {
+            label: "to",
             required: false,
             errorAfterField: true,
             cssClasses: {
-                label: [ 'form-label mt-3' ]
+                label: [ 'form-label mb-0 fw-normal' ]
             },
+            validators: [validators.regexp(/^[0-9]*(\.[0-9]{0,2})?$/, "Enter a positive number up to 2 decimal places")]
         } ),
         format_id: fields.string( {
             label: "Format",
@@ -224,34 +233,39 @@ const createSearchBooksForm = ( formats, genres, publishers, tags, authors ) => 
             widget: widgets.multipleSelect(),
             choices: tags
         } )
+    }, {
+        validatePastFirstError: true
     } )
 };
 
 const registerUserForm = ( roles ) => {
     return forms.create( {
         username: fields.string( {
-            required: false,
+            required: true,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
+            validators: [validators.rangelength(4, 12)]
         } ),
         email: fields.string( {
-            required: false,
+            required: true,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
+            validators: [validators.email()]
         } ),
         password: fields.password( {
-            required: false,
+            required: true,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
+            validators: [validators.minlength(7), validators.alphanumeric()]
         } ),
         confirm_password: fields.password( {
-            required: false,
+            required: true,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
@@ -260,7 +274,7 @@ const registerUserForm = ( roles ) => {
         } ),
         role_id: fields.password( {
             label: "Role",
-            required: false,
+            required: true,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
@@ -268,6 +282,8 @@ const registerUserForm = ( roles ) => {
             widget: widgets.select(),
             choices: roles
         } )
+    }, {
+        validatePastFirstError: true
     } );
 }
 
@@ -279,6 +295,7 @@ const createUpdateUserForm = () => {
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
+            validators: [validators.rangelength(4, 12)]
         } ),
         email: fields.string( {
             required: true,
@@ -286,6 +303,7 @@ const createUpdateUserForm = () => {
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
+            validators: [validators.email()]
         } ),
         old_password: fields.password( {
             required: true,
@@ -293,6 +311,7 @@ const createUpdateUserForm = () => {
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
+            validators: [validators.minlength(7), validators.alphanumeric()],
         } ),
         new_password: fields.password( {
             required: true,
@@ -300,6 +319,7 @@ const createUpdateUserForm = () => {
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
+            validators: [validators.minlength(7), validators.alphanumeric()]
         } ),
         new_confirm_password: fields.password( {
             required: true,
@@ -309,6 +329,8 @@ const createUpdateUserForm = () => {
             },
             validators: [ validators.matchField( "new_password" ) ],
         } ),
+    }, {
+        validatePastFirstError: true
     } )
 }
 
@@ -320,6 +342,7 @@ const createLoginForm = () => {
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
+            validators: [ validators.email()]
         } ),
         password: fields.password( {
             required: true,
@@ -328,6 +351,8 @@ const createLoginForm = () => {
                 label: [ "form-label mt-3" ],
             },
         } ),
+    }, {
+        validatePastFirstError: true
     } )
 }
 

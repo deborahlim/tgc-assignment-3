@@ -6,12 +6,30 @@
      transition: opacity 1s ease;
  }
 
- .absolute {
-     float: right;
-     position: absolute;
+ .remove {
+     display: none;
  }
+
+ /* .absolute {
+     position: fixed;
+     float: right;
+     width: fit-content;
+     max-width: 120px;
+     font-size: 1rem;
+ } */
+
+
 
  .form {
      width: 50%;
      margin: 0 auto
+ }
+
+ .btn-color {
+     background-color: salmon !important;
+ }
+
+ /* style navbar active links */
+ .active {
+     color: salmon !important;
  }

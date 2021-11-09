@@ -26,7 +26,7 @@ router.get( "/", checkIfAuthenticated, async ( req, res ) => {
     res.render( "users/index", {
         users: users.toJSON(),
         active: {
-            User: true
+            Users: true
         }
     } )
 } )

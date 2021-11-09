@@ -1,17 +1,25 @@
-{{#extends 'base'}}
+{{#extends "base"}}
 
-    {{#block 'content'}}
-    <div class="text-center m-5">
-        <h1 class="display-3">Book Shop Management System</h1>
-        <h3 class="display-5 mt-5">Login</h3>
-        <p class="lead">Please login with your account below</p>
-    </div>
-        
-        <form method="POST" class="form">
-            <input type="hidden" name="_csrf" value="{{csrfToken}}" />
-            {{{form}}}
-            <input type="submit" class="btn btn-primary mt-4 me-4" value="Log In">
+  {{#block "content"}}
+    <div class="container p-4 text-center">
+      <div class="container-fluid mx-auto">
+          <h1 class="display-2 mb-5">The Book Corner Management System</h1>
+          <h3 class="display-5">Login</h3>
+          <p class="lead">Please login with your account below</p>
+        </div>
+        <form method="POST">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+          <div class="form">{{{form}}}</div>
+          
+          <input
+            type="submit"
+            class="btn btn-primary mt-4"
+            value="Log In"
+          />
         </form>
-    {{/block}}
+    
+    </div>
+
+  {{/block}}
 
 {{/extends}}
