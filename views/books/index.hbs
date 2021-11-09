@@ -2,8 +2,8 @@
 
   {{#block "content"}}
     <div class="d-flex">
-      <div class="p-4 border border-dark bg-secondary me-3 rounded">
-        <h3 class="display-7 fs-4">Filter Your Search</h3>
+      <div class="p-4 border border-light filter-background  me-3 rounded">
+        <h3 class="display-7 fs-4 text-center">Filter Your Search</h3>
         <hr>
         
         <form class="fw-bold" method="GET">
@@ -17,16 +17,16 @@
 
       </div>
       <div class="p-4">
-        <h1>Books</h1>
+        <h1 class="display-3 text-center my-3">Books</h1>
 
-        <a href="/books/create" class="btn btn-info">Add New Book</a>
+        <a href="/books/create" class="btn btn-info btn-lg">Add New Book</a>
         <table class="table table-hover">
           <thead>
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Title</th>
               <th scope="col">Author</th>
-              <th scope="col">Published Date</th>
+              <th scope="col">Date Published</th>
               <th scope="col">Stock</th>
               <th scope="col">Cost</th>
               <th scope="col">Format</th>

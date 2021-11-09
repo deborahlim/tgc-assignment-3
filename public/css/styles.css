@@ -26,10 +26,15 @@
  }
 
  .btn-color {
-     background-color: salmon !important;
+     background-color: rgb(114, 245, 250) !important;
  }
 
  /* style navbar active links */
  .active {
-     color: salmon !important;
+     color: rgb(9, 177, 199) !important;
  }
+
+ .filter-background {
+     background-color: rgb(238, 237, 237);
+ }
+

@@ -176,7 +176,7 @@ const createSearchBooksForm = ( formats, genres, publishers, tags, authors ) => 
             widget: widgets.date()
         } ),
         min_cost: fields.number( {
-            label: "Price Range",
+            label: "Price Range (S$)",
             required: false,
             errorAfterField: true,
             cssClasses: {
@@ -189,7 +189,7 @@ const createSearchBooksForm = ( formats, genres, publishers, tags, authors ) => 
             required: false,
             errorAfterField: true,
             cssClasses: {
-                label: [ 'form-label mb-0 fw-normal' ]
+                label: [ 'form-label mb-0 fw-normal' ],              
             },
             validators: [validators.regexp(/^[0-9]*(\.[0-9]{0,2})?$/, "Enter a positive number up to 2 decimal places")]
         } ),
@@ -237,6 +237,18 @@ const createSearchBooksForm = ( formats, genres, publishers, tags, authors ) => 
         validatePastFirstError: true
     } )
 };
+
+const createAuthorSearchForm = () => {
+    return forms.create({
+        name: fields.string({
+            required: false,
+            label: "    ",
+            cssClasses: {
+                label: ["control-label col col-lg-3"]
+            }
+        })
+    })
+}
 
 const registerUserForm = ( roles ) => {
     return forms.create( {
@@ -417,5 +429,6 @@ module.exports = {
     createGenreForm,
     createTagForm,
     createUpdateUserForm,
-    createSearchBooksForm
+    createSearchBooksForm,
+    createAuthorSearchForm
 }

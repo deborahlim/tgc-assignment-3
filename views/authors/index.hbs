@@ -1,31 +1,50 @@
-{{#extends 'base'}}
+{{#extends "base"}}
 
-    {{#block 'content'}}
-        <h1>Authors</h1>
-        <a href="authors/create" class="btn btn-primary">Add Author</a>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th></th>
-                </tr>
+  {{#block "content"}}
+    <div class="p-4 text-end">
+      <h1 class="display-3 text-center my-3">Authors</h1>
 
-            </thead>
-            <tbody class="">
-                {{#each authors}}
-                    <tr class="align-middle">
-                        <td>
-                            {{this.id}}
-                        </td>
-                        <td>{{this.name}}</td>
-                        <td>
-                            <a href="/authors/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
-                        </td>
-                    </tr>
-                {{/each}}
-            </tbody>
-        </table>
-    {{/block}}
+      <div class="v-stack gap-3 my-5">
+          <a href="authors/create" class="btn btn-primary mb-4">Add Author</a>
+   
+          <form class="d-flex justify-content-end fw-bold mb-0" method="GET">
+            {{{form}}}
+            <input
+              type="submit"
+              class="btn btn-info ms-3"
+              value="Search"
+            />
+          </form>
+        </div>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th></th>
+          </tr>
+
+        </thead>
+        <tbody class="">
+          {{#each authors}}
+            <tr class="align-middle">
+              <td>
+                {{this.id}}
+              </td>
+              <td>{{this.name}}</td>
+              <td>
+                <a
+                  href="/authors/{{this.id}}/delete"
+                  class="btn btn-danger btn-sm"
+                >Delete</a>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+    </div>
+  {{/block}}
 
 {{/extends}}
