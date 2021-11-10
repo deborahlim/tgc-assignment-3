@@ -15,7 +15,7 @@
 
   <body>
     <div>
-      {{#if user}}
+      {{#if currentUser}}
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="#" class="me-3">The Book Corner</a>
@@ -53,12 +53,12 @@
               </li>
             </ul>
             <div class="text-light d-flex align-items-center">
-              <a href="/users/{{user.id}}/account" class="nav-link text-light {{#if active.Account}}active{{/if}}"
+              <a href="/users/{{currentUser.id}}/account" class="nav-link text-light {{#if active.Account}}active{{/if}}"
                 aria-current="page">My
                 Account</a>
-              <div class="">{{#if user}}
+              <div class="">{{#if currentUser}}
                 <span>Hi,
-                  {{user.username}}</span>  
+                  {{currentUser.username}}</span>  
                   <a href="/users/logout" class="ms-3 btn btn-light btn-sm">Log Out</a>
 
                 {{else}}

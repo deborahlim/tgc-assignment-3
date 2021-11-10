@@ -2,7 +2,7 @@
 
     {{#block 'content'}}
     <div class="m-5 text-center">
-         <h1 class="display-3">Register A User</h1>
+         <h1 class="display-3">Register New User</h1>
     </div>
        
 
@@ -10,7 +10,8 @@
             <input type="hidden" name="_csrf" value="{{csrfToken}}" />
             {{{form}}}
             <input type="submit" value="Register" class="btn btn-primary mt-3" />
+             </form>
     {{/block}}
-    </form>
+   
 
 {{/extends}}

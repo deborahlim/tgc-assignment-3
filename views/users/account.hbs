@@ -6,10 +6,10 @@
       </div>
       <div class="card" style="width: 70%; margin: 0 auto">
         <div class="card-body">
-          <p class="card-text "><span class="fw-bold">Username:</span> {{user.username}}</p>
-          <p class="card-text "><span class="fw-bold"> Role:</span> {{user.roles.name}}</p>
-          <p class="card-text "><span class="fw-bold">Email: </span> {{user.email}}</p>
-          <a href="/users/{{user.id}}/account/update" class="btn btn-primary mt-3">Update Details</a>
+          <p class="card-text "><span class="fw-bold">Username:</span> {{currentUser.username}}</p>
+          <p class="card-text "><span class="fw-bold"> Role:</span> {{currentUser.roles.name}}</p>
+          <p class="card-text "><span class="fw-bold">Email: </span> {{currentUser.email}}</p>
+          <a href="/users/{{currentUser.id}}/account/update" class="btn btn-primary mt-3">Update Details</a>
         </div>
       </div>
     </div>

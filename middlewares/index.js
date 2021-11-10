@@ -1,13 +1,10 @@
-const {
-    Model
-} = require( "bookshelf" );
 const jwt = require( 'jsonwebtoken' );
 const checkIfAuthenticated = ( req, res, next ) => {
-    if ( req.session.user ) {
+    if ( req.session.currentUser ) {
         next()
     } else {
         req.flash( "error_messages", "You need to log in to access this page" )
-        res.redirect( "/users/login" )
+        res.redirect( "/" )
     }
 }
 
@@ -36,7 +33,7 @@ const checkIfAuthenticatedJWT = ( req, res, next ) => {
 const checkRoles = ( userRoles ) => {
     return ( req, res, next ) => {
         // console.log( "USER DETAILS", req.session.user )
-        if ( userRoles.includes( req.session.user.role.name ) ) {
+        if ( userRoles.includes( req.session.currentUser.role.name ) ) {
             next()
         } else {
             req.flash( "error_messages", "You do not have permission to access this page " )

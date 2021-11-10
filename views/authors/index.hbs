@@ -20,18 +20,18 @@
       <table class="table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th></th>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col"></th>
           </tr>
 
         </thead>
         <tbody class="">
           {{#each authors}}
             <tr class="align-middle">
-              <td>
+              <th scope="row">
                 {{this.id}}
-              </td>
+              </th>
               <td>{{this.name}}</td>
               <td>
                 <a

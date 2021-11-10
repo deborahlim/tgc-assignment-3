@@ -19,7 +19,7 @@ router.post( "/", async ( req, res ) => {
         success: async ( form ) => {
             //process the form
             // find the user by email and password
-            let user = await User.where( {
+            let currentUser = await User.where( {
                 email: form.data.email,
             } ).fetch( {
                 require: false,
@@ -27,7 +27,7 @@ router.post( "/", async ( req, res ) => {
             } );
 
             // console.log( user.toJSON() )
-            if ( !user ) {
+            if ( !currentUser ) {
                 // console.log( "User does not exist" )
                 req.flash(
                     "error_messages",
@@ -36,17 +36,18 @@ router.post( "/", async ( req, res ) => {
                 res.redirect( "/login" )
             } else {
                 // console.log( "User Exists" )
-                if ( user.get( "password" ) === getHashedPassword( form.data.password ) ) {
+                if ( currentUser.get( "password" ) === getHashedPassword(form.data.password ) ) {
                     // console.log( req.session.user )
-                    req.session.user = {
-                        id: user.get( "id" ),
-                        username: user.get( "username" ),
-                        email: user.get( "email" ),
-                        role: user.related( "roles" ).toJSON()
+                    req.session.currentUser = {
+                        id: currentUser.get( "id" ),
+                        username: currentUser.get( "username" ),
+                        email: currentUser.get( "email" ),
+                        role: currentUser.related( "roles" ).toJSON()
                     };
+                    console.log(req.session.currentUser)
                     req.flash(
                         "success_messages",
-                        "Welcome back, " + user.get( "username" )
+                        "Welcome back, " + currentUser.get( "username" )
                     );
                     // console.log( "LOGIN REQUEST = ", req.session );
                     // console.log( "THE USER IS: ", req.session.user )

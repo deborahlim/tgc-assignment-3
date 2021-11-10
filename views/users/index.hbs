@@ -6,26 +6,30 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th></th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col"></th>
+             
                 </tr>
 
             </thead>
             <tbody class="">
                 {{#each users}}
                     <tr class="align-middle">
-                        <td>
+                        <th scope="col">
                             {{this.id}}
-                        </td>
+                        </th>
                         <td>{{this.username}}</td>
                         <td>{{this.email}}</td>
                         <td>{{this.roles.name}}</td>
                         <td>
+                            <a href="/users/{{this.id}}/update" class="btn btn-primary btn-sm">Update</a>
                             <a href="/users/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
                         </td>
+                        
+                        
                     </tr>
                 {{/each}}
             </tbody>

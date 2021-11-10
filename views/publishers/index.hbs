@@ -3,21 +3,21 @@
     {{#block 'content'}}
         <h1>Publishers</h1>
         <a href="publishers/create" class="btn btn-primary">Add Publisher</a>
-        <table class="table">
+        <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
                     <th></th>
                 </tr>
 
             </thead>
             <tbody class="">
                 {{#each publishers}}
-                    <tr class="align-middle">
-                        <td>
+                    <tr class="al ign-middle">
+                        <th>
                             {{this.id}}
-                        </td>
+                        </th>
                         <td>{{this.name}}</td>
                         <td>
                             <a href="/publishers/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>

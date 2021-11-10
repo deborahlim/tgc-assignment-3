@@ -299,7 +299,7 @@ const registerUserForm = ( roles ) => {
     } );
 }
 
-const createUpdateUserForm = () => {
+const createUpdateUserAccountForm = () => {
     return forms.create( {
         username: fields.string( {
             required: true,
@@ -323,10 +323,9 @@ const createUpdateUserForm = () => {
             cssClasses: {
                 label: [ "form-label mt-3" ],
             },
-            validators: [validators.minlength(7), validators.alphanumeric()],
         } ),
         new_password: fields.password( {
-            required: true,
+            required: false,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
@@ -334,7 +333,8 @@ const createUpdateUserForm = () => {
             validators: [validators.minlength(7), validators.alphanumeric()]
         } ),
         new_confirm_password: fields.password( {
-            required: true,
+            label: "Confirm New Password",
+            required: false,
             errorAfterField: true,
             cssClasses: {
                 label: [ "form-label mt-3" ],
@@ -344,6 +344,58 @@ const createUpdateUserForm = () => {
     }, {
         validatePastFirstError: true
     } )
+}
+
+const createUpdateUserForm = (roles) => {
+    return forms.create({
+        username: fields.string( {
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ],
+            },
+            validators: [validators.rangelength(4, 12)]
+        } ),
+        email: fields.string( {
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ],
+            },
+            validators: [validators.email()]
+        } ),
+        
+        new_password: fields.password( {
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ],
+            },
+            validators: [validators.minlength(7), validators.alphanumeric()]
+        }),
+        new_confirm_password: fields.password( {
+            label: "Confirm New Password",
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ],
+            },
+            validators: [ validators.matchField( "new_password" ) ],
+        }),
+        role_id: fields.password( {
+            label: "Role",
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: [ "form-label mt-3" ],
+            },
+            widget: widgets.select(),
+            choices: roles
+        } )
+   
+    }, {
+        validatePastFirstError: true
+    })
 }
 
 const createLoginForm = () => {
@@ -429,6 +481,7 @@ module.exports = {
     createGenreForm,
     createTagForm,
     createUpdateUserForm,
+    createUpdateUserAccountForm,
     createSearchBooksForm,
     createAuthorSearchForm
 }
