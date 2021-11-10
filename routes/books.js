@@ -19,18 +19,19 @@ const {
     checkIfAuthenticated,
     checkRoles
 } = require( "./../middlewares" );
-const dataLayer = require( "../dal/books" )
-
+const bookDataLayer = require( "../dal/books" )
+const cartDataLayer = require("../dal/cart_items")
+const ordersDataLayer = require("../dal/orders")
 router.get( "/", checkIfAuthenticated, async ( req, res ) => {
 
-    const allFormats = await dataLayer.getAllRelated( Format )
+    const allFormats = await bookDataLayer.getAllRelated( Format )
     allFormats.unshift( [ 0, "All Formats" ] );
-    const allGenres = await dataLayer.getAllRelated( Genre )
+    const allGenres = await bookDataLayer.getAllRelated( Genre )
     allGenres.unshift( [ 0, "All Genres" ] );
-    const allPublishers = await dataLayer.getAllRelated( Publisher )
+    const allPublishers = await bookDataLayer.getAllRelated( Publisher )
     allPublishers.unshift( [ 0, "All Publishers" ] );
-    const allTags = await dataLayer.getAllRelated( Tag )
-    const allAuthors = await dataLayer.getAllRelated( Author )
+    const allTags = await bookDataLayer.getAllRelated( Tag )
+    const allAuthors = await bookDataLayer.getAllRelated( Author )
 
     let searchForm = createSearchBooksForm( allFormats, allGenres, allPublishers, allTags, allAuthors )
     // query builder that means "SELECT * from books". Can continue to add clauses to a query builder until we execute it with a fetch function call. 
@@ -127,11 +128,11 @@ router.get( "/", checkIfAuthenticated, async ( req, res ) => {
 
 router.get( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
 
-    const allFormats = await dataLayer.getAllRelated( Format )
-    const allGenres = await dataLayer.getAllRelated( Genre )
-    const allPublishers = await dataLayer.getAllRelated( Publisher )
-    const allTags = await dataLayer.getAllRelated( Tag )
-    const allAuthors = await dataLayer.getAllRelated( Author )
+    const allFormats = await bookDataLayer.getAllRelated( Format )
+    const allGenres = await bookDataLayer.getAllRelated( Genre )
+    const allPublishers = await bookDataLayer.getAllRelated( Publisher )
+    const allTags = await bookDataLayer.getAllRelated( Tag )
+    const allAuthors = await bookDataLayer.getAllRelated( Author )
 
     // create an instance of the form
     const bookForm = createBookForm( allFormats, allGenres, allPublishers, allTags, allAuthors );
@@ -146,11 +147,11 @@ router.get( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] 
 } )
 
 router.post( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
-    const allFormats = await dataLayer.getAllRelated( Format )
-    const allGenres = await dataLayer.getAllRelated( Genre )
-    const allPublishers = await dataLayer.getAllRelated( Publisher )
-    const allTags = await dataLayer.getAllRelated( Tag )
-    const allAuthors = await dataLayer.getAllRelated( Author )
+    const allFormats = await bookDataLayer.getAllRelated( Format )
+    const allGenres = await bookDataLayer.getAllRelated( Genre )
+    const allPublishers = await bookDataLayer.getAllRelated( Publisher )
+    const allTags = await bookDataLayer.getAllRelated( Tag )
+    const allAuthors = await bookDataLayer.getAllRelated( Author )
 
     const bookForm = createBookForm( allFormats, allGenres, allPublishers, allTags, allAuthors );
 
@@ -189,13 +190,13 @@ router.post( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ]
 } )
 
 router.get( "/:book_id/update", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
-    const allFormats = await dataLayer.getAllRelated( Format )
-    const allGenres = await dataLayer.getAllRelated( Genre )
-    const allPublishers = await dataLayer.getAllRelated( Publisher )
-    const allTags = await dataLayer.getAllRelated( Tag )
-    const allAuthors = await dataLayer.getAllRelated( Author )
+    const allFormats = await bookDataLayer.getAllRelated( Format )
+    const allGenres = await bookDataLayer.getAllRelated( Genre )
+    const allPublishers = await bookDataLayer.getAllRelated( Publisher )
+    const allTags = await bookDataLayer.getAllRelated( Tag )
+    const allAuthors = await bookDataLayer.getAllRelated( Author )
     // retrive the book instance with book id
-    const book = await dataLayer.getBookById( req.params.book_id )
+    const book = await bookDataLayer.getBookById( req.params.book_id )
     // create book form and assign the value of each field from it's corresponding key in the book model instance
     const bookForm = createBookForm( allFormats, allGenres, allPublishers, allTags, allAuthors );
     bookForm.fields.title.value = book.get( "title" );
@@ -223,13 +224,13 @@ router.get( "/:book_id/update", checkIfAuthenticated, checkRoles( [ "Manager", "
 } )
 
 router.post( "/:book_id/update", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
-    const allFormats = await dataLayer.getAllRelated( Format )
-    const allGenres = await dataLayer.getAllRelated( Genre )
-    const allPublishers = await dataLayer.getAllRelated( Publisher )
-    const allTags = await dataLayer.getAllRelated( Tag )
-    const allAuthors = await dataLayer.getAllRelated( Author )
+    const allFormats = await bookDataLayer.getAllRelated( Format )
+    const allGenres = await bookDataLayer.getAllRelated( Genre )
+    const allPublishers = await bookDataLayer.getAllRelated( Publisher )
+    const allTags = await bookDataLayer.getAllRelated( Tag )
+    const allAuthors = await bookDataLayer.getAllRelated( Author )
     // retrive the book instance with book id
-    const book = await dataLayer.getBookById( req.params.book_id )
+    const book = await bookDataLayer.getBookById( req.params.book_id )
     // console.log( book.toJSON() )
     const bookForm = createBookForm( allFormats, allGenres, allPublishers, allTags, allAuthors );
     bookForm.handle( req, {
@@ -278,16 +279,25 @@ router.post( "/:book_id/update", checkIfAuthenticated, checkRoles( [ "Manager", 
 
 router.get( "/:book_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     // fetch the book that we want to delete
-    const book = await dataLayer.getBookById( req.params.book_id )
+    const book = await bookDataLayer.getBookById( req.params.book_id )
+    const bookInCart = await cartDataLayer.getCartItemsByBook(req.params.book_id)
+    const orderItems = await ordersDataLayer.getOrderItemByBookId(req.params.book_id) 
+    if(bookInCart || orderItems) {
+        req.flash("error_messages", `Error. ${book.toJSON().title} cannot be deleted.`)
+        res.redirect( "/books" );
+        
+    }
+    else {
+        res.render( "books/delete", {
+            book: book.toJSON()
+        } )
+    }
 
-    res.render( "books/delete", {
-        book: book.toJSON()
-    } )
 } )
 
 router.post( "/:book_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
     // fetch the book that we want to delete
-    const book = await dataLayer.getBookById( req.params.book_id )
+    const book = await bookDataLayer.getCartItems( req.params.book_id )
     await book.destroy();
     res.redirect( "/books" );
 } )

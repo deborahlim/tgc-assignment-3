@@ -43,9 +43,18 @@ const getOrderItemByOrder = async (orderId) => {
     })
 }
 
+const getOrderItemByBookId = async (bookId) => {
+    return await OrderItem.where({
+        book_id: bookId,
+    }).fetch({
+        require: false,
+    })
+}
+
 module.exports = {
     createNewOrder,
     createNewOrderItem,
     getOrder,
-    getOrderItemByOrder
+    getOrderItemByOrder,
+    getOrderItemByBookId
 }

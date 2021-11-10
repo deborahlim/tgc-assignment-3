@@ -21,6 +21,14 @@ const getCartItemByCustomerAndBook = async ( customerId, bookId ) => {
     } );
 }
 
+const getCartItemsByBook = async (bookId) => {
+    return await CartItem.where({
+        book_id: bookId
+    }).fetch({
+        require: false
+    })
+} 
+
 const createCartItem = async ( customerId, bookId, quantity ) => {
 
     let cartItem = new CartItem( {
@@ -58,5 +66,6 @@ module.exports = {
     getCartItemByCustomerAndBook,
     createCartItem,
     removeFromCart,
-    updateQuantity
+    updateQuantity,
+    getCartItemsByBook
 }
