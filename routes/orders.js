@@ -1,9 +1,6 @@
 const express = require("express")
 const router = express.Router();
 
-const {
-    Order
-} = require("./../models")
 
 const {
     checkIfAuthenticated,
@@ -34,9 +31,15 @@ router.get("/:order_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Ow
 
 
 router.post("/:order_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
-    await dataLayer.deleteOrder(req.params.order_id);
+    let result = await dataLayer.deleteOrder(req.params.order_id);
+    if (result) {
+        req.flash("success_messages", "The order was successfully deleted.")
+        res.redirect("/orders")
+    } else {
+        req.flash("error_messages", "Something went wrong. Please try again.")
+        res.redirect("/orders")
+    }
 
-    res.redirect("/orders")
 })
 
 module.exports = router

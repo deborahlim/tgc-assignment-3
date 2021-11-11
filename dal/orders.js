@@ -46,7 +46,7 @@ const getOrderById = async (orderId) => {
     return await Order.where({
         id: orderId
     }).fetch({
-        require: true,
+        require: false,
         withRelated: ["orderItems"]
     });
 }
@@ -70,15 +70,18 @@ const getOrderItemByBookId = async (bookId) => {
 
 const deleteOrder = async (orderId) => {
     let order = await getOrderById(orderId);
-    // let orderItems = await getOrderItemByOrder(orderId)
-    let orderItemsArr = order.toJSON().orderItems
     // console.log("ORDER:", order.toJSON());
     // console.log("ORDER ITEMS:", orderItemsArr);
 
     let orderItems = await getOrderItemByOrder(orderId)
-    await orderItems.destroy();
+    if (order && orderItems) {
+        await orderItems.destroy();
+        await order.destroy();
+        return true
+    } else {
+        return false;
+    }
 
-    await order.destroy();
 }
 
 module.exports = {

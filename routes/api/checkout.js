@@ -85,9 +85,10 @@ router.post('/process_payment', express.raw({
   } catch (e) {
     console.log(e.message);
     // the stripe request is invalid (i.e not from stripe)
-    res.send({
+    res.status(400).send({
       'error': e.message
     })
+    return;
 
   }
   // if the stripe request is verified to be from stripe
