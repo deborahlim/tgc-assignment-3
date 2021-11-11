@@ -85,24 +85,21 @@ router.post('/process_payment', express.raw({
   } catch (e) {
     console.log(e.message);
     // the stripe request is invalid (i.e not from stripe)
-    res.status(400).send({
+    return res.status(400).send({
       'error': e.message
     })
-    return;
-
   }
   // if the stripe request is verified to be from stripe
   // then we recreate payment session
-  let stripeSession = event.data.object;
-  let {
-    id,
-    metadata,
-    payment_status,
-    amount_total
-  } = stripeSession
-  if (event.type == 'checkout.session.completed') {
-    console.log("STRIPE SESSION = ", stripeSession);
-    // create new order
+
+
+  const process_checkout = async (stripeSession) => {
+    let {
+      id,
+      metadata,
+      payment_status,
+      amount_total
+    } = stripeSession
     let order = await orderDataLayer.createNewOrder(id, metadata.customer_id, payment_status, amount_total);
     let orderObj = order.toJSON()
     // console.log("ORDER OBJECT = ", orderObj)
@@ -116,8 +113,27 @@ router.post('/process_payment', express.raw({
 
       await cartServices.remove(orderItem.book_id);
       // console.log(item.toJSON())
-    });
 
+    });
+  }
+
+
+  switch (event.type) {
+    case 'checkout.session.completed':
+      const session = event.data.object;
+      console.log("STRIPE SESSION = ", session);
+      // create new order
+      process_checkout(session);
+      break;
+    case 'checkout.session.expired':
+      session = event.data.object;
+      process_checkout(session);
+      break;
+
+    case 'payment_intent.created':
+
+    default:
+      console.log(`Unhandled event type ${event.type}`);
 
   }
 
@@ -125,5 +141,6 @@ router.post('/process_payment', express.raw({
     'recieved': true
   })
 })
+
 
 module.exports = router;
