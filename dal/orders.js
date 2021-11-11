@@ -3,6 +3,12 @@ const {
     OrderItem,
 } = require("../models")
 
+const getAllOrders = async () => {
+    return await Order.collection().fetch({
+        withRelated: ["customers"]
+    })
+}
+
 const createNewOrder = async (id, customerId, status, amountTotal) => {
     let order = new Order({
         id: id,
@@ -11,11 +17,13 @@ const createNewOrder = async (id, customerId, status, amountTotal) => {
         amountTotal: amountTotal
     })
 
-    await order.save(null, {method: 'insert'});
+    await order.save(null, {
+        method: 'insert'
+    });
     return order;
 }
 
-const createNewOrderItem = async(orderId, bookId, quantity) => {
+const createNewOrderItem = async (orderId, bookId, quantity) => {
     let orderItem = new OrderItem({
         order_id: orderId,
         book_id: bookId,
@@ -25,7 +33,7 @@ const createNewOrderItem = async(orderId, bookId, quantity) => {
     return orderItem
 }
 
-const getOrder = async(customerId) => {
+const getOrder = async (customerId) => {
     return await Order.collection().where({
         customer_id: customerId
     }).fetch({
@@ -51,7 +59,17 @@ const getOrderItemByBookId = async (bookId) => {
     })
 }
 
+
+const deleteOrder = async (orderId) => {
+    let order = await getOrder(orderId);
+    let orderItems = await getOrderItemByOrder(orderId).toJSON();
+
+    // await order.destroy()
+    return true
+}
+
 module.exports = {
+    getAllOrders,
     createNewOrder,
     createNewOrderItem,
     getOrder,

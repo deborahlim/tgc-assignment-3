@@ -1,9 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
-const { errorResponse } = require("./../../utils/errorResponse");
+const {
+  errorResponse
+} = require("./../../utils/errorResponse");
 const orderDataLayer = require("../../dal/orders");
-const { checkIfAuthenticatedJWT } = require("../../middlewares");
+const {
+  checkIfAuthenticatedJWT
+} = require("../../middlewares");
 
 router.get("/", checkIfAuthenticatedJWT, async (req, res) => {
   try {

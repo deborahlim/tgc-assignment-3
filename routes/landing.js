@@ -1,78 +1,87 @@
 const express = require("express");
-const router = express.Router(); 
-const {createLoginForm,  bootstrapField} = require("../forms")
-const {getHashedPassword} = require("../utils/hash")
+const router = express.Router();
+const {
+    createLoginForm,
+    bootstrapField
+} = require("../forms")
+const {
+    getHashedPassword
+} = require("../utils/hash")
 const {
     User
-} = require( '../models' );
+} = require('../models');
 
-router.get( "/", async ( req, res ) => {
+router.get("/", async (req, res) => {
     let loginForm = createLoginForm();
-    res.render( "landing/index", {
-        form: loginForm.toHTML( bootstrapField )
-    } )
-} )
+    if (req.session.currentUser) {
+        res.redirect("/books")
+    } else {
+        res.render("landing/index", {
+            form: loginForm.toHTML(bootstrapField)
+        })
+    }
+})
 
-router.post( "/", async ( req, res ) => {
+router.post("/", async (req, res) => {
     const loginForm = createLoginForm();
-    loginForm.handle( req, {
-        success: async ( form ) => {
+    loginForm.handle(req, {
+        success: async (form) => {
             //process the form
             // find the user by email and password
-            let currentUser = await User.where( {
+            let currentUser = await User.where({
                 email: form.data.email,
-            } ).fetch( {
+            }).fetch({
                 require: false,
-                withRelated: [ "roles" ]
-            } );
+                withRelated: ["roles"]
+            });
 
             // console.log( user.toJSON() )
-            if ( !currentUser ) {
+            if (!currentUser) {
                 // console.log( "User does not exist" )
                 req.flash(
                     "error_messages",
                     "Sorry, the authentication details you have provided does not work"
                 );
-                res.redirect( "/login" )
+                res.redirect("/login")
             } else {
                 // console.log( "User Exists" )
-                if ( currentUser.get( "password" ) === getHashedPassword(form.data.password ) ) {
+                if (currentUser.get("password") === getHashedPassword(form.data.password)) {
                     // console.log( req.session.user )
                     req.session.currentUser = {
-                        id: currentUser.get( "id" ),
-                        username: currentUser.get( "username" ),
-                        email: currentUser.get( "email" ),
-                        role: currentUser.related( "roles" ).toJSON()
+                        id: currentUser.get("id"),
+                        username: currentUser.get("username"),
+                        email: currentUser.get("email"),
+                        role: currentUser.related("roles").toJSON()
                     };
                     console.log(req.session.currentUser)
                     req.flash(
                         "success_messages",
-                        "Welcome back, " + currentUser.get( "username" )
+                        "Welcome back, " + currentUser.get("username")
                     );
                     // console.log( "LOGIN REQUEST = ", req.session );
                     // console.log( "THE USER IS: ", req.session.user )
-                    res.redirect( `/books` );
+                    res.redirect(`/books`);
                 } else {
                     // console.log( "Password is not correct" )
                     req.flash(
                         "error_messages",
                         "Sorry, the authentication details you provided does not work"
                     );
-                    res.redirect( "/" );
+                    res.redirect("/");
                 }
             }
         },
-        error: ( form ) => {
+        error: (form) => {
             req.flash(
                 "error_messages",
                 "There are some problems with logging you in. Please fill in the form again."
             );
-            res.render( "landing/index", {
-                form: form.toHTML( bootstrapField ),
-            } );
+            res.render("landing/index", {
+                form: form.toHTML(bootstrapField),
+            });
         },
-    } );
-} );
+    });
+});
 
 
-module.exports = router; 
+module.exports = router;

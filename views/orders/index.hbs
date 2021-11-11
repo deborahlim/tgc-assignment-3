@@ -1,0 +1,37 @@
+{{#extends 'base'}}
+
+    {{#block 'content'}}
+        <h1>Orders</h1>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Customer ID</th>
+                    <th scope="col">Customer Username</th>
+                    <th scope="col">Amount Total</th>
+                    <th scope="col">Order Status</th>
+                    <th scope="col">Amount Total</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+            <tbody class="">
+                {{#each orders}}
+                    <tr class="align-middle">
+                        <th>
+                            {{this.id}}
+                        </th>
+                        <td>{{this.customer_id}}</td>
+                        <td>{{this.customers.username}}</td>
+                        <td>{{this.status}}</td>
+
+
+                        <td> <a href="/publishers/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{/block}}
+
+{{/extends}}
