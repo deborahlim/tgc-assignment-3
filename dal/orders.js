@@ -42,11 +42,20 @@ const getOrder = async (customerId) => {
     });
 }
 
+const getOrderById = async (orderId) => {
+    return await Order.where({
+        id: orderId
+    }).fetch({
+        require: true,
+        withRelated: ["orderItems"]
+    });
+}
+
 const getOrderItemByOrder = async (orderId) => {
     return await OrderItem.where({
         order_id: orderId
     }).fetch({
-        require: false,
+        require: true,
         withRelated: ["books"]
     })
 }
@@ -59,13 +68,17 @@ const getOrderItemByBookId = async (bookId) => {
     })
 }
 
-
 const deleteOrder = async (orderId) => {
-    let order = await getOrder(orderId);
-    let orderItems = await getOrderItemByOrder(orderId).toJSON();
+    let order = await getOrderById(orderId);
+    // let orderItems = await getOrderItemByOrder(orderId)
+    let orderItemsArr = order.toJSON().orderItems
+    // console.log("ORDER:", order.toJSON());
+    // console.log("ORDER ITEMS:", orderItemsArr);
 
-    // await order.destroy()
-    return true
+    let orderItems = await getOrderItemByOrder(orderId)
+    await orderItems.destroy();
+
+    await order.destroy();
 }
 
 module.exports = {
@@ -73,6 +86,8 @@ module.exports = {
     createNewOrder,
     createNewOrderItem,
     getOrder,
+    getOrderById,
     getOrderItemByOrder,
-    getOrderItemByBookId
+    getOrderItemByBookId,
+    deleteOrder
 }

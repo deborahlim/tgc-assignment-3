@@ -53,7 +53,7 @@ router.post("/", async (req, res) => {
                         email: currentUser.get("email"),
                         role: currentUser.related("roles").toJSON()
                     };
-                    console.log(req.session.currentUser)
+                    // console.log(req.session.currentUser)
                     req.flash(
                         "success_messages",
                         "Welcome back, " + currentUser.get("username")

@@ -14,7 +14,7 @@ const dataLayer = require("./../dal/orders")
 router.get("/", checkIfAuthenticated, async (req, res) => {
 
     let orders = await dataLayer.getAllOrders()
-    console.log(orders.toJSON());
+    // console.log(orders.toJSON());
     res.render("orders/index", {
         orders: orders.toJSON(),
         active: {
@@ -25,20 +25,18 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
 })
 
 router.get("/:order_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
-    // fetch the publisher that we want to delete
-    const order = await dataLayer.getorderById(req.params.order_id)
-
-    res.render("order/delete", {
+    let order = await dataLayer.getOrderById(req.params.order_id)
+    // console.log(order.toJSON())
+    res.render("orders/delete", {
         order: order.toJSON()
     })
 })
 
 
 router.post("/:order_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
-    const order = await dataLayer.getorderById(req.params.order_id)
-    const orderItems = await dataLayer.getOrder
-    await order.destroy()
-    res.redirect("/order")
+    await dataLayer.deleteOrder(req.params.order_id);
+
+    res.redirect("/orders")
 })
 
 module.exports = router

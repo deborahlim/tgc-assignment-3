@@ -72,22 +72,23 @@ router.post('/process_payment', express.raw({
   // req contains data send to this endpoint from Stripe
   // and is only sent when Stripe completes a payment
   let payload = req.body;
-  // console.log("PAYLOAD", payload)
+  console.log("PAYLOAD", payload)
   // we need an endpointSecret to verify that this request is actually sent from stripes
   let endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
   // console.log("ENDPOINT SECRET= ", endpointSecret)
   let sigHeader = req.headers['stripe-signature'];
-  // console.log("SIG HEADER= ", sigHeader);
+  console.log("SIG HEADER= ", sigHeader);
   let event;
   try {
     event = Stripe.webhooks.constructEvent(payload, sigHeader, endpointSecret);
-    // console.log("EVENT", event);
+    console.log("EVENT", event);
   } catch (e) {
+    console.log(e.message);
     // the stripe request is invalid (i.e not from stripe)
     res.send({
       'error': e.message
     })
-    console.log(e.message);
+
   }
   // if the stripe request is verified to be from stripe
   // then we recreate payment session
@@ -110,7 +111,7 @@ router.post('/process_payment', express.raw({
     let cartServices = new CartServices(orderObj.customer_id);
     // add each item to order items table and remove each corresponding cart item
     orderItems.forEach(async (orderItem) => {
-      let item = await orderDataLayer.createNewOrderItem(orderObj.id, orderItem.book_id, orderItem.quantity)
+      await orderDataLayer.createNewOrderItem(orderObj.id, orderItem.book_id, orderItem.quantity)
 
       await cartServices.remove(orderItem.book_id);
       // console.log(item.toJSON())
