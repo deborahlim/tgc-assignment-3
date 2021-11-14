@@ -64,8 +64,7 @@ const changeStock = async (bookId, quantity) => {
     }).fetch({
         require: true
     });
-    console.log("CHANGE STOCK");
-    book.set("stock", book.get("stock") + (quantity))
+    book.set("stock", book.get("stock") - quantity)
     book.save();
 }
 

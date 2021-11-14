@@ -1,7 +1,6 @@
 const {
     CartItem
 } = require('../models');
-const bookDataLayer = require("../dal/books")
 
 const getCart = async (customerId) => {
     return await CartItem.collection()
@@ -53,7 +52,6 @@ const removeFromCart = async (customerId, bookId) => {
 const updateQuantity = async (customerId, bookId, newQuantity) => {
     let cartItem = await getCartItemByCustomerAndBook(customerId, bookId);
     if (cartItem) {
-        await bookDataLayer.changeStock(bookId, cartItem.get("quantity") - newQuantity)
         cartItem.set('quantity', newQuantity);
         cartItem.save();
         return true;

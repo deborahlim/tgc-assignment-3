@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const CartServices = require("../../services/cart_services")
-const bookDataLayer = require("../../dal/books");
 const {
     errorResponse
 } = require("../../utils/errorResponse")
@@ -24,13 +23,12 @@ router.get('/add', checkIfAuthenticatedJWT, async (req, res) => {
     if (result) {
         res.status(201).send("Yay! Successfully added to cart")
     } else {
-        errorResponse(res)
+        errorResponse(res, "The maximum quantity has been reached", 400)
     }
 })
 
 router.get("/remove", checkIfAuthenticatedJWT, async (req, res) => {
     let cart = new CartServices(parseInt(req.query.customer_id));
-    await bookDataLayer.changeStock(bookId, cartItem.get("quantity"))
     let result = await cart.remove(req.query.book_id);
     if (result) {
         res.status(200).send("Item had been removed")
@@ -47,7 +45,7 @@ router.post("/quantity/update", checkIfAuthenticatedJWT, async function (req, re
     if (status) {
         res.status(201).send("Quantity updated");
     } else {
-        errorResponse(res, "Error Encountered. Please try Again.", 500);
+        errorResponse(res, "The maximum quantity has been reached", 400);
     }
 });
 module.exports = router

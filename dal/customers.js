@@ -1,36 +1,36 @@
 const {
     Customer
-} = require( "../models" );
+} = require("../models");
 
-const crypto = require( 'crypto' )
-const getHashedPassword = ( password ) => {
-    const sha256 = crypto.createHash( 'sha256' );
-    const hash = sha256.update( password ).digest( 'base64' );
+const crypto = require('crypto')
+const getHashedPassword = (password) => {
+    const sha256 = crypto.createHash('sha256');
+    const hash = sha256.update(password).digest('base64');
     return hash;
 }
-const createNewCustomer = async ( obj ) => {
+const createNewCustomer = async (obj) => {
 
-    console.log( getCustomerByUsername( obj.username ) )
+    // console.log( getCustomerByUsername( obj.username ) )
 
-    let customer = new Customer( {
+    let customer = new Customer({
         username: obj.username,
-        password: getHashedPassword( obj.password ),
+        password: getHashedPassword(obj.password),
         email: obj.email,
         contactNumber: obj.contactNumber,
         address: obj.address
 
 
-    } )
+    })
     await customer.save();
     return customer
 }
 
-const getCustomerByUsername = async ( username ) => {
-    return await Customer.where( {
+const getCustomerByUsername = async (username) => {
+    return await Customer.where({
         username: username
-    } ).fetch( {
+    }).fetch({
         require: false,
-    } )
+    })
 }
 
 module.exports = {

@@ -49,7 +49,6 @@ app.use(function (req, res, next) {
 // Share the user data with hbs files
 app.use(function (req, res, next) {
   res.locals.currentUser = req.session.currentUser;
-  console.log(res.locals)
   next();
 });
 // enable protection from cross site request forgery

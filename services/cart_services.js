@@ -6,13 +6,20 @@ class CartServices {
     }
 
     async addToCart(bookId, quantity) {
+        // check if there is stock
+        let book = await bookDataLayer.getBookById(bookId)
+        let currentStock = book.get("stock")
+        if (currentStock === 0) return false;
         // check if the user has added the book to the shopping cart before
         let cartItem = await cartDataLayer
             .getCartItemByCustomerAndBook(this.customer_id, bookId);
-        await bookDataLayer.changeStock(bookId, -1);
         if (cartItem) {
+            let currentQuantity = cartItem.get("quantity");
+            if (currentQuantity + 1 > currentStock) {
+                return false;
+            }
             return await cartDataLayer
-                .updateQuantity(this.customer_id, bookId, cartItem.get('quantity') + 1);
+                .updateQuantity(this.customer_id, bookId, currentQuantity + 1);
         } else {
             let newCartItem = cartDataLayer.
             createCartItem(this.customer_id, bookId, quantity);
@@ -27,6 +34,11 @@ class CartServices {
 
 
     async setQuantity(bookId, quantity) {
+        let book = await bookDataLayer.getBookById(bookId)
+        let currentStock = book.get("stock")
+        if (quantity > currentStock) {
+            return false;
+        }
         return await cartDataLayer
             .updateQuantity(this.customer_id, bookId, quantity);
     }

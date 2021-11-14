@@ -54,7 +54,7 @@ router.post('/register', checkIfAuthenticated, checkRoles(['Owner']), async (req
                 'email': form.data.email,
                 'role_id': form.data.role_id
             });
-            console.log(user.toJSON());
+            // console.log(user.toJSON());
             await user.save();
             req.flash("success_messages", "User has been registered successfully")
             res.redirect('/users')
@@ -79,7 +79,7 @@ router.get("/:user_id/account", checkIfAuthenticated, async (req, res) => {
     res.render("users/account", {
         currentUser: currentUser.toJSON()
     })
-    console.log(req.session.currentUser)
+    // console.log(req.session.currentUser)
 })
 
 router.get("/:user_id/account/update", checkIfAuthenticated, async (req, res) => {
@@ -147,12 +147,12 @@ router.post("/:user_id/update", checkIfAuthenticated, checkRoles(["Owner"]), asy
         success: async (form) => {
             user.set("username", form.data.username);
             user.set("email", form.data.email);
-            console.log(form.data.new_password)
+            // console.log(form.data.new_password)
 
             user.set("password", getHashedPassword(form.data.new_password));
 
             user.set("role_id", form.data.role_id)
-            console.log(user.toJSON())
+            // console.log(user.toJSON())
             await user.save()
             req.flash("success_messages", `${user.toJSON().username}'s details has been updated`)
             res.redirect("/users")

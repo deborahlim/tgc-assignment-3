@@ -18,7 +18,7 @@ const dataLayer = require("./../dal/books")
 router.get("/", checkIfAuthenticated, async (req, res) => {
 
     let publishers = await Publisher.collection().fetch()
-    console.log(publishers.toJSON())
+    // console.log(publishers.toJSON())
     res.render("publishers/index", {
         publishers: publishers.toJSON(),
         active: {
@@ -56,7 +56,7 @@ router.post("/create", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), a
 router.get("/:publisher_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
     // fetch the publisher that we want to delete
     const publisher = await dataLayer.getPublisherById(req.params.publisher_id)
-    console.log(publisher.toJSON())
+    // console.log(publisher.toJSON())
     res.render("publishers/delete", {
         publisher: publisher.toJSON()
     })

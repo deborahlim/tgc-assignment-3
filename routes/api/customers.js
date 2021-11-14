@@ -1,90 +1,92 @@
-const express = require( 'express' )
+const express = require('express')
 const router = express.Router()
-const {getHashedPassword} = require("../../utils/hash")
-const jwt = require( 'jsonwebtoken' )
+const {
+    getHashedPassword
+} = require("../../utils/hash")
+const jwt = require('jsonwebtoken')
 const {
     errorResponse
-} = require( "./../../utils/errorResponse" )
+} = require("./../../utils/errorResponse")
 const {
     Customer
-} = require( "../../models" )
-const customerDataLayer = require( '../../dal/customers' )
+} = require("../../models")
+const customerDataLayer = require('../../dal/customers')
 
 const {
     checkIfAuthenticatedJWT
-} = require( '../../middlewares' )
+} = require('../../middlewares')
 
-const generateAccessToken = ( customer ) => {
-    console.log( customer )
-    return jwt.sign( {
-        username: customer.get( "username" ),
-        id: customer.get( "id" ),
-        email: customer.get( "email" ),
-        contact_number: customer.get( "contactNumber" ),
-        address: customer.get( "address" )
+const generateAccessToken = (customer) => {
+    // console.log( customer )
+    return jwt.sign({
+        username: customer.get("username"),
+        id: customer.get("id"),
+        email: customer.get("email"),
+        contact_number: customer.get("contactNumber"),
+        address: customer.get("address")
 
 
     }, process.env.TOKEN_SECRET, {
         expiresIn: "1h"
-    } );
+    });
 }
 
-router.post( "/register", async ( req, res ) => {
-    let checkEmail = await Customer.where( {
+router.post("/register", async (req, res) => {
+    let checkEmail = await Customer.where({
         email: req.body.email
-    } ).fetch( {
+    }).fetch({
         require: false
-    } );
+    });
 
-    let checkUsername = await Customer.where( {
+    let checkUsername = await Customer.where({
         username: req.body.username
-    } ).fetch( {
+    }).fetch({
         require: false
-    } );
+    });
 
-    if ( !checkEmail && !checkUsername ) {
-        await customerDataLayer.createNewCustomer( req.body );
-        res.send( {
+    if (!checkEmail && !checkUsername) {
+        await customerDataLayer.createNewCustomer(req.body);
+        res.send({
             message: "Success"
-        } )
-    } else if ( checkEmail && checkUsername ) {
+        })
+    } else if (checkEmail && checkUsername) {
         return errorResponse(
             res,
             "The email and username provided already exists",
             401
         );
-    } else if ( checkEmail )
-        return errorResponse( res, "The email provided already exists", 406 );
+    } else if (checkEmail)
+        return errorResponse(res, "The email provided already exists", 406);
 
-    else if ( checkValidUsername !== null )
-        return errorResponse( res, "The username provided already exists", 409 );
-} )
+    else if (checkValidUsername !== null)
+        return errorResponse(res, "The username provided already exists", 409);
+})
 
-router.post( '/login', async ( req, res ) => {
-    let customer = await Customer.where( {
+router.post('/login', async (req, res) => {
+    let customer = await Customer.where({
         'email': req.body.email
-    } ).fetch( {
+    }).fetch({
         require: false
-    } );
+    });
     // console.log( customer )
-    if ( customer && customer.get( 'password' ) == getHashedPassword( req.body.password ) ) {
-        let accessToken = generateAccessToken( customer );
-        res.send( {
+    if (customer && customer.get('password') == getHashedPassword(req.body.password)) {
+        let accessToken = generateAccessToken(customer);
+        res.send({
             ...customer.toJSON(),
             accessToken
-        } )
+        })
     } else {
-        return errorResponse( res, "Your login credentials are incorrect", 401 );
+        return errorResponse(res, "Your login credentials are incorrect", 401);
     }
 
-} )
+})
 
-router.get( '/profile', checkIfAuthenticatedJWT, async ( req, res ) => {
+router.get('/profile', checkIfAuthenticatedJWT, async (req, res) => {
     // console.log( req )
     const customer = req.customer;
     // console.log( customer )
-    res.send( customer );
-} )
+    res.send(customer);
+})
 
 
 module.exports = router;

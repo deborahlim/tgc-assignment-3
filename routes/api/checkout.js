@@ -5,6 +5,7 @@ const Stripe = require("stripe")(process.env.STRIPE_KEY_SECRET);
 const {
   checkIfAuthenticatedJWT
 } = require("../../middlewares");
+const bookDataLayer = require("../../dal/books");
 const orderDataLayer = require("../../dal/orders");
 router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
   // in stripe -- a payment object represents one transaction
@@ -72,16 +73,16 @@ router.post('/process_payment', express.raw({
   // req contains data send to this endpoint from Stripe
   // and is only sent when Stripe completes a payment
   let payload = req.body;
-  console.log("PAYLOAD", payload)
+  // console.log("PAYLOAD", payload)
   // we need an endpointSecret to verify that this request is actually sent from stripes
   let endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
   // console.log("ENDPOINT SECRET= ", endpointSecret)
   let sigHeader = req.headers['stripe-signature'];
-  console.log("SIG HEADER= ", sigHeader);
+  // console.log("SIG HEADER= ", sigHeader);
   let event;
   try {
     event = Stripe.webhooks.constructEvent(payload, sigHeader, endpointSecret);
-    console.log("EVENT", event);
+    // console.log("EVENT", event);
   } catch (e) {
     console.log(e.message);
     // the stripe request is invalid (i.e not from stripe)
@@ -110,9 +111,9 @@ router.post('/process_payment', express.raw({
     // add each item to order items table and remove each corresponding cart item
     orderItems.forEach(async (orderItem) => {
       await orderDataLayer.createNewOrderItem(orderObj.id, orderItem.book_id, orderItem.quantity)
-
+      await bookDataLayer.changeStock(orderItem.book_id, orderItem.quantity);
       await cartServices.remove(orderItem.book_id);
-      // console.log(item.toJSON())
+
 
     });
   }
