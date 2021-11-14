@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const CartServices = require("../../services/cart_services")
+const bookDataLayer = require("../../dal/books");
 const {
     errorResponse
 } = require("../../utils/errorResponse")
@@ -29,6 +30,7 @@ router.get('/add', checkIfAuthenticatedJWT, async (req, res) => {
 
 router.get("/remove", checkIfAuthenticatedJWT, async (req, res) => {
     let cart = new CartServices(parseInt(req.query.customer_id));
+    await bookDataLayer.changeStock(bookId, cartItem.get("quantity"))
     let result = await cart.remove(req.query.book_id);
     if (result) {
         res.status(200).send("Item had been removed")

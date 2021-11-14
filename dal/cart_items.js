@@ -1,24 +1,25 @@
 const {
     CartItem
-} = require( '../models' );
+} = require('../models');
+const bookDataLayer = require("../dal/books")
 
-const getCart = async ( customerId ) => {
+const getCart = async (customerId) => {
     return await CartItem.collection()
-        .where( {
+        .where({
             'customer_id': customerId
-        } ).fetch( {
+        }).fetch({
             require: false,
-            withRelated: [ 'books' ]
-        } );
+            withRelated: ['books']
+        });
 }
 
-const getCartItemByCustomerAndBook = async ( customerId, bookId ) => {
-    return await CartItem.where( {
+const getCartItemByCustomerAndBook = async (customerId, bookId) => {
+    return await CartItem.where({
         'customer_id': customerId,
         'book_id': bookId
-    } ).fetch( {
+    }).fetch({
         require: false
-    } );
+    });
 }
 
 const getCartItemsByBook = async (bookId) => {
@@ -27,32 +28,33 @@ const getCartItemsByBook = async (bookId) => {
     }).fetch({
         require: false
     })
-} 
+}
 
-const createCartItem = async ( customerId, bookId, quantity ) => {
+const createCartItem = async (customerId, bookId, quantity) => {
 
-    let cartItem = new CartItem( {
+    let cartItem = new CartItem({
         'customer_id': customerId,
         'book_id': bookId,
         'quantity': quantity
-    } )
+    })
     await cartItem.save();
     return cartItem;
 }
 
-const removeFromCart = async ( customerId, bookId ) => {
-    let cartItem = await getCartItemByCustomerAndBook( customerId, bookId );
-    if ( cartItem ) {
+const removeFromCart = async (customerId, bookId) => {
+    let cartItem = await getCartItemByCustomerAndBook(customerId, bookId);
+    if (cartItem) {
         await cartItem.destroy();
         return true;
     }
     return false;
 }
 
-const updateQuantity = async ( customerId, bookId, newQuantity ) => {
-    let cartItem = await getCartItemByCustomerAndBook( customerId, bookId );
-    if ( cartItem ) {
-        cartItem.set( 'quantity', newQuantity );
+const updateQuantity = async (customerId, bookId, newQuantity) => {
+    let cartItem = await getCartItemByCustomerAndBook(customerId, bookId);
+    if (cartItem) {
+        await bookDataLayer.changeStock(bookId, cartItem.get("quantity") - newQuantity)
+        cartItem.set('quantity', newQuantity);
         cartItem.save();
         return true;
     }
