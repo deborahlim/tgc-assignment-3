@@ -104,13 +104,20 @@ router.post('/refresh', async function (req, res) {
         res.send("The refresh token has already expired");
     }
 
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, function (err, payload) {
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async function (err, payload) {
+        console.log("PAYLOAD", payload)
         if (err) {
             return res.sendStatus(403);
         }
-        let accessToken = generateToken(payload, process.env.TOKEN_SECRET, '15m')
+        let customer = await Customer.where({
+            'email': payload.email
+        }).fetch({
+            require: false
+        });
+        let accessToken = generateAccessToken(customer, process.env.TOKEN_SECRET, '15m')
+        // console.log(accessToken)
         res.send({
-                'accessToken': accessToken
+                accessToken
             }
 
         )
