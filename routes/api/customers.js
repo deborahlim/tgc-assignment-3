@@ -19,7 +19,7 @@ const {
     checkIfAuthenticatedJWT
 } = require('../../middlewares')
 
-const generateAccessToken = (customer, secret, duration) => {
+const generateToken = (customer, secret, duration) => {
     // console.log( customer )
     return jwt.sign({
         username: customer.get("username"),
@@ -73,8 +73,8 @@ router.post('/login', async (req, res) => {
     });
     // console.log( customer )
     if (customer && customer.get('password') == getHashedPassword(req.body.password)) {
-        let accessToken = generateAccessToken(customer, process.env.TOKEN_SECRET, "15m");
-        let refreshToken = generateAccessToken(customer, process.env.REFRESH_TOKEN_SECRET, "3w");
+        let accessToken = generateToken(customer, process.env.TOKEN_SECRET, "15m");
+        let refreshToken = generateToken(customer, process.env.REFRESH_TOKEN_SECRET, "3w");
         res.send({
             ...customer.toJSON(),
             accessToken,
@@ -105,7 +105,7 @@ router.post('/refresh', async function (req, res) {
     }
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async function (err, payload) {
-        console.log("PAYLOAD", payload)
+        // console.log("PAYLOAD", payload)
         if (err) {
             return res.sendStatus(403);
         }
@@ -114,7 +114,7 @@ router.post('/refresh', async function (req, res) {
         }).fetch({
             require: false
         });
-        let accessToken = generateAccessToken(customer, process.env.TOKEN_SECRET, '15m')
+        let accessToken = generateToken(customer, process.env.TOKEN_SECRET, '15m')
         // console.log(accessToken)
         res.send({
                 accessToken
