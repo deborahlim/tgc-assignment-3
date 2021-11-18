@@ -23,7 +23,7 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
       // and all of them must be present
       let lineItem = {
         name: item.related("books").get("title"),
-        amount: item.related("books").get("cost"),
+        amount: item.related("books").get("cost") * 100,
         quantity: item.get("quantity"),
         currency: "SGD",
       };
@@ -133,10 +133,10 @@ router.post('/process_payment', express.raw({
       //   console.log("STRIPE SESSION = ", expiredSession);
       //   process_checkout(expiredSession);
       //   break;
-      // case 'payment_intent.canceled':
-      //   const payment = event.data.object;
-      //   console.log("PAYMENT", payment);
-      //   break;
+    case 'payment_intent.canceled':
+      const payment = event.data.object;
+      console.log("PAYMENT", payment);
+      break;
     default:
       console.log(`Unhandled event type ${event.type}`);
 

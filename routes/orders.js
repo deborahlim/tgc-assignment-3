@@ -11,7 +11,7 @@ const dataLayer = require("./../dal/orders")
 router.get("/", checkIfAuthenticated, async (req, res) => {
 
     let orders = await dataLayer.getAllOrders()
-    // console.log(orders.toJSON());
+    console.log(orders.toJSON());
     res.render("orders/index", {
         orders: orders.toJSON(),
         active: {

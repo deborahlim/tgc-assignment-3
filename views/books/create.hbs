@@ -7,14 +7,20 @@
       <form method="POST" class="form">
         <input type="hidden" name="_csrf" value="{{csrfToken}}" />
         {{{form}}}
-        <div class="mb-5">
-          <a href="#" class="btn btn-dark my-3" id="upload_widget">Upload
+         <label for="" class="form-label fw-bold mt-3">
+          Cover Art
+        </label>
+     <div class="mb-5">
+       <a href="#" class="btn btn-dark " id="upload_widget">Upload
             Cover Art</a>
-
-        </div>
         <img src="" style="display:none" id="uploaded_image" />
-    
-        <input type="submit" value="Add Book" class="btn btn-info btn-lg"/>
+     </div>
+          
+     
+     <div class="">
+       <input type="submit" value="Add Book" class="btn btn-primary btn-lg"/>
+        <a href="/books" class="btn btn-danger btn-lg ms-2">Cancel</a>
+     </div>
     </div>
       </form>
     </div>

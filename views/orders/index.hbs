@@ -9,7 +9,7 @@
                     <th scope="col">Customer ID</th>
                     <th scope="col">Customer Username</th>
                     <th scope="col">Order Status</th>
-                    <th scope="col">Amount Total</th>
+                    <th scope="col">Amount Total ($)</th>
                     <th></th>
                 </tr>
 
@@ -23,7 +23,7 @@
                         <td>{{this.customer_id}}</td>
                         <td>{{this.customers.username}}</td>
                         <td>{{this.status}}</td>
-                        <td>{{this.amountTotal}}</td>
+                        <td>${{this.amountTotal}}</td>
                         <td> <a href="/orders/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
                         </td>
                     </tr>
