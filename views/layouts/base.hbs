@@ -56,20 +56,14 @@
                   Orders</a>
               </li>
             </ul>
-            <div class="text-light d-flex align-items-center">
-              <a href="/users/{{currentUser.id}}/account" class="nav-link text-light {{#if active.Account}}active{{/if}}"
+            <div class=" navbar navbar-nav text-light d-flex align-items-center">
+              <a href="/users/{{currentUser.id}}/account" class="nav-link {{#if active.Account}}active{{/if}}"
                 aria-current="page">My
                 Account</a>
-              <div class="">{{#if currentUser}}
-                <span>Hi,
-                  {{currentUser.username}}</span>  
-                  <a href="/users/logout" class="ms-3 btn btn-light btn-sm">Log Out</a>
-
-                {{else}}
-                <span class="pt-2">Hi, stranger</span>   
-                  <a href="/" class="ms-3 btn btn-light btn-sm">Log In</a>
-                {{/if}}</div>
-
+              Hi,
+                  {{currentUser.username}}
+         
+                   <a href="/users/logout" class="ms-md-3 ms-sm-0 mt-sm-2 mt-md-0 btn btn-light btn-sm">Log Out</a>
             </div>
           </div>
 

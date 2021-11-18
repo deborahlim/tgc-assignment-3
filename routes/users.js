@@ -77,7 +77,10 @@ router.get("/:user_id/account", checkIfAuthenticated, async (req, res) => {
     let currentUser = await dataLayer.getUserById(req.session.currentUser.id);
     // console.log( user.toJSON() )
     res.render("users/account", {
-        currentUser: currentUser.toJSON()
+        currentUser: currentUser.toJSON(),
+        active: {
+            Account: true
+        }
     })
     // console.log(req.session.currentUser)
 })
