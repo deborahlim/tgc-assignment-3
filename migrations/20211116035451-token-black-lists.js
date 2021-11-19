@@ -26,14 +26,14 @@ exports.up = function (db) {
       length: 5000
     },
     date_created: {
-      type: 'date'
+      type: 'datetime'
     }
   })
 
 };
 
 exports.down = function (db) {
-  return dropTable("blacklisted_tokens");
+  return db.dropTable("blacklisted_tokens");
 };
 
 exports._meta = {

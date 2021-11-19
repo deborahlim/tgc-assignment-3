@@ -14,9 +14,9 @@ const createNewOrder = async (id, customerId, status, amountTotal) => {
         id: id,
         customer_id: customerId,
         status: status,
-        amountTotal: amountTotal
+        amountTotal: amountTotal / 100
     })
-
+    order.set("createdAt", new Date());
     await order.save(null, {
         method: 'insert'
     });
