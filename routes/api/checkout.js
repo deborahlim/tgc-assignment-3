@@ -103,6 +103,9 @@ router.post('/process_payment', express.raw({
       payment_status,
       amount_total
     } = stripeSession
+    if (payment_status === "paid") {
+      payment_status = 1;
+    }
     let order = await orderDataLayer.createNewOrder(id, metadata.customer_id, payment_status, amount_total);
     let orderObj = order.toJSON()
     // console.log("ORDER OBJECT = ", orderObj)
@@ -133,6 +136,14 @@ router.post('/process_payment', express.raw({
       //   console.log("STRIPE SESSION = ", expiredSession);
       //   process_checkout(expiredSession);
       //   break;
+    case 'order.created':
+      const order = event.data.object;
+      console.log(order);
+      break;
+    case 'order.payment_failed':
+      order = event.data.object;
+      console.log(order);
+      break;
     case 'payment_intent.canceled':
       const payment = event.data.object;
       console.log("PAYMENT", payment);

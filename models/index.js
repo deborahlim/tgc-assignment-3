@@ -95,6 +95,9 @@ const Order = bookshelf.model("Orders", {
     },
     orderItems() {
         return this.hasMany("OrderItem")
+    },
+    orderStatuses() {
+        return this.belongsTo("OrderStatus")
     }
 })
 
@@ -112,6 +115,15 @@ const BlacklistedToken = bookshelf.model('BlacklistedToken', {
     tableName: 'blacklisted_tokens'
 })
 
+const OrderStatus = bookshelf.model("OrderStatus", {
+    tableName: "order_statuses",
+    books() {
+        return this.hasMany("Book")
+    },
+
+
+})
+
 
 module.exports = {
     Book,
@@ -126,5 +138,6 @@ module.exports = {
     Customer,
     Order,
     OrderItem,
-    BlacklistedToken
+    BlacklistedToken,
+    OrderStatus
 }

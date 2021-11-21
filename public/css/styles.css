@@ -37,13 +37,9 @@
      }
  }
 
- .btn-color {
-     background-color: rgb(114, 245, 250) !important;
- }
-
  /* style navbar active links */
  .active {
-     color: rgb(9, 177, 199) !important;
+     color: #cfe2ff !important;
  }
 
  .filter-background {

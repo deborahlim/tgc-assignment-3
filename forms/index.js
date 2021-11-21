@@ -468,7 +468,20 @@ const createTagForm = () => {
     })
 }
 
-
+const createUpdateOrderStatusForm = (statuses) => {
+    return forms.create({
+        status: fields.string({
+            label: "Status",
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ["form-label mt-3"]
+            },
+            widget: widgets.select(),
+            choices: statuses,
+        }),
+    })
+}
 
 
 module.exports = {
@@ -483,5 +496,6 @@ module.exports = {
     createUpdateUserForm,
     createUpdateUserAccountForm,
     createSearchBooksForm,
-    createAuthorSearchForm
+    createAuthorSearchForm,
+    createUpdateOrderStatusForm
 }

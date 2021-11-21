@@ -3,7 +3,7 @@
   {{#block "content"}}
     <h1 class="text-center my-5">Update Book: {{book.title}}</h1>
     <div class="fw-bold">
-      <form method="POST" style="width:50%; margin: 0 auto">
+      <form method="POST" class="form">
         <input type="hidden" name="_csrf" value="{{csrfToken}}" />
         {{{form}}}
         <label for="" class="form-label fw-bold mt-3">
@@ -19,8 +19,8 @@
         <a href="#" class="btn btn-dark mt-2 mb-5" id="upload_widget">Upload Cover
           Art</a>
         <div class="">
-          <input type="submit" value="Update Book" class="btn btn-primary btn-lg" />
-          <a href="/books" class="btn btn-danger btn-lg">Cancel Update</a>
+          <input type="submit" value="Update Book" class="btn btn-primary" />
+          <a href="/books" class="btn btn-danger">Cancel Update ms-4</a>
         </div>
 
       </form>

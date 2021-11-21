@@ -1,11 +1,18 @@
 const {
     Order,
     OrderItem,
+    OrderStatus
 } = require("../models")
 
 const getAllOrders = async () => {
     return await Order.collection().fetch({
-        withRelated: ["customers"]
+        withRelated: ["customers", "orderStatuses"]
+    })
+}
+
+const getRelatedOrderStatus = async () => {
+    return await OrderStatus.fetchAll().map((row) => {
+        return [row.get("id"), row.get("name")]
     })
 }
 
@@ -14,7 +21,8 @@ const createNewOrder = async (id, customerId, status, amountTotal) => {
         id: id,
         customer_id: customerId,
         status: status,
-        amountTotal: amountTotal / 100
+        amountTotal: amountTotal / 100,
+        order_status_id: status
     })
     order.set("createdAt", new Date());
     await order.save(null, {
@@ -92,5 +100,6 @@ module.exports = {
     getOrderById,
     getOrderItemByOrder,
     getOrderItemByBookId,
-    deleteOrder
+    deleteOrder,
+    getRelatedOrderStatus
 }
