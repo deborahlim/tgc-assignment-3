@@ -1,31 +1,35 @@
 {{#extends 'base'}}
 
     {{#block 'content'}}
-        <h1>Tags</h1>
-        <a href="tags/create" class="btn btn-primary">Add Genre</a>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col"></th>
-                </tr>
+        <div class="p-">
+            <h1 class="display-3 text-center my-5">Tags</h1>
+            <a href="tags/create" class="btn btn-primary">Add Genre</a>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col"></th>
+                        </tr>
 
-            </thead>
-            <tbody class="">
-                {{#each tags}}
-                    <tr class="align-middle">
-                        <th scope="row">
-                            {{this.id}}
-                        </th>
-                        <td>{{this.name}}</td>
-                        <td>
-                            <a href="/tags/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
-                        </td>
-                    </tr>
-                {{/each}}
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody class="">
+                        {{#each tags}}
+                            <tr class="align-middle">
+                                <th scope="row">
+                                    {{this.id}}
+                                </th>
+                                <td>{{this.name}}</td>
+                                <td>
+                                    <a href="/tags/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+                                </td>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     {{/block}}
 
 {{/extends}}

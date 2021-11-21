@@ -1,22 +1,18 @@
 {{#extends "base"}}
 
   {{#block "content"}}
-    <div class="p-4 text-end">
-      <h1 class="display-3 text-center my-3">Authors</h1>
+    <div class="p-4">
+      <h1 class="display-3 text-center my-5">Authors</h1>
 
-      <div class="v-stack gap-3 my-5">
-          <a href="authors/create" class="btn btn-primary mb-4">Add Author</a>
-   
-          <form class="d-flex justify-content-end fw-bold mb-0" method="GET">
-            {{{form}}}
-            <input
-              type="submit"
-              class="btn btn-info ms-3"
-              value="Search"
-            />
-          </form>
-        </div>
+      <div class="d-flex flex-column flex-md-row justify-content-between ">
+        <form class="d-flex justify-content-end mb-0 align-self-end" method="GET">
+          {{{form}}}
+          <input type="submit" class="btn btn-primary ms-md-3 align-self-end" value="Search" />
+        </form>
+        <a href="authors/create" class="btn btn-primary mt-sm-4">Add Author</a>
       </div>
+    </div>
+    <div class="table-responsive">
       <table class="table">
         <thead>
           <tr>
@@ -34,16 +30,13 @@
               </th>
               <td>{{this.name}}</td>
               <td>
-                <a
-                  href="/authors/{{this.id}}/delete"
-                  class="btn btn-danger btn-sm"
-                >Delete</a>
+                <a href="/authors/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
               </td>
             </tr>
           {{/each}}
         </tbody>
       </table>
-
+    </div>
     </div>
   {{/block}}
 
