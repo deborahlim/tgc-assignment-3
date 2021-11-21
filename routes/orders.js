@@ -4,27 +4,90 @@ const router = express.Router();
 const ordersDataLayer = require("./../dal/orders");
 const {
     createUpdateOrderStatusForm,
+    createSearchOrdersForm,
     bootstrapField
 } = require("./../forms")
 const {
     checkIfAuthenticated,
     checkRoles
 } = require("./../middlewares")
-const dataLayer = require("./../dal/orders");
 const {
-    route
-} = require("./authors");
+    Order
+} = require('./../models');
+const dataLayer = require("./../dal/orders");
+
 
 router.get("/", checkIfAuthenticated, async (req, res) => {
+    let allOrderStatuses = await ordersDataLayer.getRelatedOrderStatus();
+    (await allOrderStatuses).unshift([0, "All Statuses"]);
+    let searchForm = createSearchOrdersForm(allOrderStatuses);
+    let q = Order.collection();
+    searchForm.handle(req, {
+        empty: async (form) => {
+            let orders = await q.fetch({
+                withRelated: ["customers", "orderStatuses"]
+            })
 
-    let orders = await dataLayer.getAllOrders()
-    console.log(orders.toJSON());
-    res.render("orders/index", {
-        orders: orders.toJSON(),
-        active: {
-            Orders: true
-        }
+            res.render("orders/index", {
+                orders: orders.toJSON(),
+                form: form.toHTML(bootstrapField),
+                active: {
+                    Orders: true
+                }
+            })
+        },
+        error: async (form) => {
+            let orders = await q.fetch({
+                withRelated: ["customers", "orderStatuses"]
+            })
 
+            res.render("orders/index", {
+                orders: orders.toJSON(),
+                form: form.toHTML(bootstrapField),
+                active: {
+                    Orders: true
+                }
+            })
+        },
+        success: async (form) => {
+            if (form.data.id) {
+                q = q.where("id", "=", form.data.id)
+            }
+
+            if (form.data.order_status_id && form.data.order_status_id !== "0") {
+                q = q.where("order_status_id", "=", form.data.order_status_id)
+            }
+            if (form.data.customer_id && form.data.customer_id !== "0") {
+                q = q.where("customer_id", "=", form.data.customer_id)
+            }
+            if (form.data.minAmount) {
+                q = q.where("cost", ">=", form.data.minAmount)
+            }
+
+            if (form.data.maxAmount) {
+                q = q.where("cost", "<=", form.data.maxAmount)
+            }
+
+            if (form.data.createdDateFrom) {
+                q = q.where("publishedDate", ">=", form.data.createdDateFrom)
+            }
+
+            if (form.data.createdDateTo) {
+                q = q.where("publishedDate", "<=", form.data.createdDateTo)
+            }
+            let orders = await q.fetch({
+                withRelated: ["customers", "orderStatuses"]
+            })
+
+            res.render("orders/index", {
+                orders: orders.toJSON(),
+                form: form.toHTML(bootstrapField),
+                active: {
+                    Orders: true
+                }
+            })
+
+        },
     })
 })
 

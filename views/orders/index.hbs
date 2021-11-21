@@ -1,47 +1,58 @@
-{{#extends 'base'}}
+{{#extends "base"}}
 
-    {{#block 'content'}}
-        <div class="p-4"></div>
-        <h1 class="display-3 text-center my-5">Orders</h1>
-        <div class="table-responsive">
-            <table class="table table-hover">
+    {{#block "content"}}
+        <div class="d-flex flex-column flex-sm-column flex-lg-row">
+            <div class="p-4 border border-light filter-background  me-3 rounded">
+                <h3 class="display-7 fs-4 text-center">Filter Your Search</h3>
+                <hr>
+                <form class="fw-bold" method="GET">
+                    {{{form}}}
+                    <input type="submit" class="my-4 btn btn-primary" value="Search" />
+                </form>
 
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Customer ID</th>
-                        <th scope="col">Created At</th>
-                        <th scope="col">Customer Username</th>
-                        <th scope="col">Order Status</th>
-                        <th scope="col">Amount Total ($)</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                    </tr>
+            </div>
+            <div class="">
+                <h1 class="display-3 text-center my-5">Orders</h1>
+                <div class="table-responsive">
+                    <table class="table table-hover">
 
-                </thead>
-                <tbody class="">
-                    {{#each orders}}
-                        <tr class="align-middle">
-                            <th>
-                                {{this.id}}
-                            </th>
-                            <td>{{this.customer_id}}</td>
-                            <td>{{this.createdAt}}</td>
-                            <td>{{this.customers.username}}</td>
-                            <td>{{this.orderStatuses.name}}</td>
-                            <td>${{this.amountTotal}}</td>
-                            <td>
-                                <a href="/orders/{{this.id}}/update" class="btn btn-primary btn-sm">Update</a>
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Customer ID</th>
+                                <th scope="col">Created At</th>
+                                <th scope="col">Customer Username</th>
+                                <th scope="col">Order Status</th>
+                                <th scope="col">Amount Total ($)</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
 
-                            </td>
-                            <td>
-                                <a href="/orders/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
-                            </td>
-                        </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-        </div>
+                        </thead>
+                        <tbody class="">
+                            {{#each orders}}
+                                <tr class="align-middle">
+                                    <th>
+                                        {{this.id}}
+                                    </th>
+                                    <td>{{this.customer_id}}</td>
+                                    <td>{{this.createdAt}}</td>
+                                    <td>{{this.customers.username}}</td>
+                                    <td>{{this.orderStatuses.name}}</td>
+                                    <td>${{this.amountTotal}}</td>
+                                    <td>
+                                        <a href="/orders/{{this.id}}/update" class="btn btn-primary btn-sm">Update</a>
+
+                                    </td>
+                                    <td>
+                                        <a href="/orders/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+                                    </td>
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     {{/block}}
 

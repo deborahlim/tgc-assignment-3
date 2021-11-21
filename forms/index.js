@@ -483,6 +483,85 @@ const createUpdateOrderStatusForm = (statuses) => {
     })
 }
 
+const createSearchOrdersForm = (statuses) => {
+    return forms.create({
+        id: fields.string({
+            label: "Order ID",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label mt-3']
+            },
+        }),
+        customer_id: fields.string({
+            label: "Customer ID",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label mt-3']
+            },
+        }),
+        customerUsername: fields.string({
+            label: "Customer Username",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label mt-3']
+            },
+        }),
+        createdDateFrom: fields.date({
+            label: "Created Date Range",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label mt-3']
+            },
+            validators: [validators.date()],
+            widget: widgets.date()
+        }),
+        createdDateTo: fields.date({
+            label: "to",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label mb-0 fw-normal']
+            },
+            validators: [validators.date()],
+            widget: widgets.date()
+        }),
+        order_status_id: fields.number({
+            label: "Order Status",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ["form-label mt-3"]
+            },
+            widget: widgets.select(),
+            choices: statuses
+        }),
+        minAmount: fields.number({
+            label: "Amount Range (S$)",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label mt-3']
+            },
+            validators: [validators.regexp(/^[0-9]*(\.[0-9]{0,2})?$/, "Enter a positive number up to 2 decimal places")]
+        }),
+        maxAmount: fields.number({
+            label: "to",
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label mb-0 fw-normal'],
+            },
+            validators: [validators.regexp(/^[0-9]*(\.[0-9]{0,2})?$/, "Enter a positive number up to 2 decimal places")]
+        }),
+    }, {
+        validatePastFirstError: true
+    })
+};
+
 
 module.exports = {
     createBookForm,
@@ -497,5 +576,6 @@ module.exports = {
     createUpdateUserAccountForm,
     createSearchBooksForm,
     createAuthorSearchForm,
-    createUpdateOrderStatusForm
+    createUpdateOrderStatusForm,
+    createSearchOrdersForm
 }
