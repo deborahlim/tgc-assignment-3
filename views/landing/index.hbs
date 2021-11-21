@@ -1,23 +1,22 @@
 {{#extends "base"}}
 
   {{#block "content"}}
-    <div class="container p-4 text-center">
+    <div class="container my-5 text-center">
       <div class="container-fluid mx-auto">
-          <h1 class="display-2 mb-5">The Book Corner</h1>
-          <h3 class="display-5">Login</h3>
-          <p class="lead">Please login with your account below</p>
-        </div>
-        <form method="POST">
+        <h1 class="display-2 mb-5">The Book Corner </h1>
+        <p class="display-6 fw-bold">Online Book Shop</p>
+      </div>
+      <div class="mt-5 p-5 bg-secondary text-light rounded-3">
+        <h3 class="display-5">Log In</h3>
+        <p class="lead">Please log in with your account below</p>
+
+        <form method="POST" class="form">
           <input type="hidden" name="_csrf" value="{{csrfToken}}" />
-          <div class="form">{{{form}}}</div>
-          
-          <input
-            type="submit"
-            class="btn btn-primary mt-4"
-            value="Log In"
-          />
+          <div class="p-sm-2 p-md-5">{{{form}}}</div>
+
+          <input type="submit" class="btn btn-primary mt-4" value="Log In" />
         </form>
-    
+      </div>
     </div>
 
   {{/block}}
