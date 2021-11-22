@@ -2,97 +2,85 @@
 
   {{#block "content"}}
     <div class="d-flex flex-column flex-sm-column flex-lg-row">
-      <div class="p-4 border border-light filter-background  me-3 rounded">
+      <div class="p-4 border border-light filter-background  m-3 rounded">
         <h3 class="display-7 fs-4 text-center">Filter Your Search</h3>
         <hr>
-        
+
         <form class="fw-bold" method="GET">
           {{{form}}}
-          <input
-            type="submit"
-            class="my-4 btn btn-primary"
-            value="Search"
-          />
+          <input type="submit" class="my-4 btn btn-primary" value="Search" />
         </form>
 
       </div>
-      <div class="p-4  table-responsive">
+      <div class="p-4">
         <h1 class="display-3 text-center my-3">Books</h1>
 
         <a href="/books/create" class="btn btn-primary">Add New Book</a>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Title</th>
-              <th scope="col">Author</th>
-              <th scope="col">Date Published</th>
-              <th scope="col">Stock</th>
-              <th scope="col">Cost</th>
-              <th scope="col">Format</th>
-              <th scope="col">Genre</th>
-              <th scope="col">Publisher</th>
-              <th scope="col">Description</th>
-              <th scope="col">Tags</th>
-              <th scope="col">Cover Picture</th>
-              <th scope="col"></th>
-              <th scope="col"></th>
-            </tr>
-
-          </thead>
-          <tbody>
-            {{#each books}}
-              <tr class="align-middle">
-                <th scope="row">
-                  {{this.id}}
-                </th>
-                <td>
-                  {{this.title}}
-                </td>
-                <td>{{#each this.authors}}
-                    <span class="">{{this.name}}</span>
-                  {{/each}}
-                </td>
-                <td>
-                  {{this.publishedDate}}
-                </td>
-                <td>
-                  {{this.stock}}
-                </td>
-                <td>{{this.cost}}</td>
-                <td>{{this.formats.name}}</td>
-                <td>{{this.genres.name}}</td>
-                <td>{{this.publishers.name}}</td>
-                <td>
-                  {{this.description}}
-                </td>
-                <td>{{#each this.tags}}
-                    <span class="badge bg-primary">{{this.name}}</span>
-                  {{/each}}
-                </td>
-                <td>
-                  <img
-                    src="{{this.imageUrl}}"
-                    class="img-fluid"
-                    style="max-height: 300px"
-                  />
-                </td>
-                <td>
-                  <a
-                    href="/books/{{this.id}}/update"
-                    class="btn btn-primary btn-sm"
-                  >Update</a>
-                </td>
-                <td>
-                    <a
-                    href="/books/{{this.id}}/delete"
-                    class="btn btn-danger btn-sm"
-                  >Delete</a>
-                </td>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+                <th scope="col">Date Published</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Format</th>
+                <th scope="col">Genre</th>
+                <th scope="col">Publisher</th>
+                <th scope="col">Description</th>
+                <th scope="col">Tags</th>
+                <th scope="col">Cover Picture</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
               </tr>
-            {{/each}}
-          </tbody>
-        </table>
+
+            </thead>
+            <tbody>
+              {{#each books}}
+                <tr class="align-middle">
+                  <th scope="row">
+                    {{this.id}}
+                  </th>
+                  <td>
+                    {{this.title}}
+                  </td>
+                  <td>{{#each this.authors}}
+                      <span class="">{{this.name}}</span>
+                    {{/each}}
+                  </td>
+                  <td>
+                    {{this.publishedDate}}
+                  </td>
+                  <td>
+                    {{this.stock}}
+                  </td>
+                  <td>{{this.cost}}</td>
+                  <td>{{this.formats.name}}</td>
+                  <td>{{this.genres.name}}</td>
+                  <td>{{this.publishers.name}}</td>
+                  <td>
+                    {{this.description}}
+                  </td>
+                  <td>{{#each this.tags}}
+                      <span class="badge bg-primary">{{this.name}}</span>
+                    {{/each}}
+                  </td>
+                  <td>
+                    <img src="{{this.imageUrl}}" class="img-fluid" style="max-height: 300px" />
+                  </td>
+                  <td>
+                    <a href="/books/{{this.id}}/update" class="btn btn-primary btn-sm">Update</a>
+                  </td>
+                  <td>
+                    <a href="/books/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   {{/block}}

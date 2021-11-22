@@ -61,11 +61,11 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
                 q = q.where("customer_id", "=", form.data.customer_id)
             }
             if (form.data.minAmount) {
-                q = q.where("cost", ">=", form.data.minAmount)
+                q = q.where("amountTotal", ">=", form.data.minAmount)
             }
 
             if (form.data.maxAmount) {
-                q = q.where("cost", "<=", form.data.maxAmount)
+                q = q.where("amountTotal", "<=", form.data.maxAmount)
             }
 
             if (form.data.createdDateFrom) {

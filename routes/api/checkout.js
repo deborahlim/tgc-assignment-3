@@ -131,22 +131,13 @@ router.post('/process_payment', express.raw({
       // create new order
       process_checkout(session);
       break;
-      // case 'checkout.session.expired':
-      //   const expiredSession = event.data.object;
-      //   console.log("STRIPE SESSION = ", expiredSession);
-      //   process_checkout(expiredSession);
-      //   break;
-    case 'order.created':
-      const order = event.data.object;
-      console.log(order);
-      break;
-    case 'order.payment_failed':
-      order = event.data.object;
-      console.log(order);
+    case 'payment_intent.created':
+      const payment = event.data.object;
+      console.log(payment);
       break;
     case 'payment_intent.canceled':
-      const payment = event.data.object;
-      console.log("PAYMENT", payment);
+      payment = event.data.object;
+      console.log("CANCELLED PAYMENT", payment);
       break;
     default:
       console.log(`Unhandled event type ${event.type}`);
