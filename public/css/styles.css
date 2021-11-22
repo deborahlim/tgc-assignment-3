@@ -1,3 +1,11 @@
+ /* .hero {
+     transform: translateY(-50px);
+     background-image: url("../css/hero-image.jpeg");
+     height: vh;
+     margin: 0;
+     padding: 0;
+ } */
+
  .fade {
      opacity: 0;
      -webkit-transition: opacity 1s ease;
