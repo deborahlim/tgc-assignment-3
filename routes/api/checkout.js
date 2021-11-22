@@ -79,7 +79,7 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
         let checkout = new CheckoutServices(session.id);
         checkout.process_checkout(session, session.payment_status);
       }
-    }, 5000);
+    }, 600000);
     res.send({
       sessionId: stripeSession.id,
       publishableKey: process.env.STRIPE_KEY_PUBLISHABLE,
