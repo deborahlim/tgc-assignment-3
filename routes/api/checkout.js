@@ -1,5 +1,6 @@
 const express = require("express");
 const CartServices = require("../../services/cart_services");
+const CheckoutServices = require("./../../services/checkout_services")
 const router = express.Router();
 const Stripe = require("stripe")(process.env.STRIPE_KEY_SECRET);
 const {
@@ -58,8 +59,27 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
     };
 
 
-    // create the payment session with the payment object
+    // create the payment session with the payment object and send to client
     let stripeSession = await Stripe.checkout.sessions.create(payment);
+
+    // if no completed checkout after 10 min, expire session
+    setTimeout(async function () {
+      const session = await Stripe.checkout.sessions.retrieve(
+        stripeSession.id
+      );
+      // console.log("SESSION", session)
+      if (session.payment_status === "unpaid") {
+        // const expiredSession = await Stripe.checkout.sessions.expire(
+        //   session.id
+        // );
+        const paymentIntent = await Stripe.paymentIntents.cancel(
+          session.payment_intent
+        );
+        console.log("EXPIRED SESSION", paymentIntent)
+        let checkout = new CheckoutServices(session.id);
+        checkout.process_checkout(session, session.payment_status);
+      }
+    }, 5000);
     res.send({
       sessionId: stripeSession.id,
       publishableKey: process.env.STRIPE_KEY_PUBLISHABLE,
@@ -76,7 +96,7 @@ router.post('/process_payment', express.raw({
   // and is only sent when Stripe completes a payment
   let payload = req.body;
   // console.log("PAYLOAD", payload)
-  // we need an endpointSecret to verify that this request is actually sent from stripes
+  // we need an endpointSecret to verify that this request is actually sent from stripe
   let endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
   // console.log("ENDPOINT SECRET= ", endpointSecret)
   let sigHeader = req.headers['stripe-signature'];
@@ -84,7 +104,7 @@ router.post('/process_payment', express.raw({
   let event;
   try {
     event = Stripe.webhooks.constructEvent(payload, sigHeader, endpointSecret);
-    // console.log("EVENT", event);
+    console.log("EVENT", event);
   } catch (e) {
     console.log(e.message);
     // the stripe request is invalid (i.e not from stripe)
@@ -96,48 +116,14 @@ router.post('/process_payment', express.raw({
   // then we recreate payment session
 
 
-  const process_checkout = async (stripeSession) => {
-    let {
-      id,
-      metadata,
-      payment_status,
-      amount_total
-    } = stripeSession
-    if (payment_status === "paid") {
-      payment_status = 1;
-    }
-    let order = await orderDataLayer.createNewOrder(id, metadata.customer_id, payment_status, amount_total);
-    let orderObj = order.toJSON()
-    // console.log("ORDER OBJECT = ", orderObj)
-    let orderItems = JSON.parse(metadata.orders);
-    // console.log("ORDER ID=", orderObj.id)
-    // console.log("ORDER ITEMS = ", orderItems)
-    let cartServices = new CartServices(orderObj.customer_id);
-    // add each item to order items table and remove each corresponding cart item
-    orderItems.forEach(async (orderItem) => {
-      await orderDataLayer.createNewOrderItem(orderObj.id, orderItem.book_id, orderItem.quantity)
-      await bookDataLayer.changeStock(orderItem.book_id, orderItem.quantity);
-      await cartServices.remove(orderItem.book_id);
-
-
-    });
-  }
-
 
   switch (event.type) {
     case 'checkout.session.completed':
       const session = event.data.object;
       console.log("STRIPE SESSION = ", session);
       // create new order
-      process_checkout(session);
-      break;
-    case 'payment_intent.created':
-      const payment = event.data.object;
-      console.log(payment);
-      break;
-    case 'payment_intent.canceled':
-      payment = event.data.object;
-      console.log("CANCELLED PAYMENT", payment);
+      let checkout = new CheckoutServices(session.id);
+      checkout.process_checkout(session, session.payment_status);
       break;
     default:
       console.log(`Unhandled event type ${event.type}`);
