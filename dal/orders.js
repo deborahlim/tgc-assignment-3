@@ -25,6 +25,16 @@ const getRelatedOrderStatus = async () => {
     })
 }
 
+const updateOrderStatus = async (id, newStatus) => {
+    let order = await getOrderById(id)
+    if (newStatus === "expired") {
+        order.set("order_status_id", 3)
+    } else if (newStatus === "paid") {
+        order.set("order_status_id", 1)
+    }
+    await order.save();
+}
+
 const createNewOrder = async (id, customerId, status, amountTotal) => {
     let order = new Order({
         id: id,
@@ -111,5 +121,6 @@ module.exports = {
     getOrderItemByBookId,
     deleteOrder,
     getRelatedOrderStatus,
-    getOrdersByStatus
+    getOrdersByStatus,
+    updateOrderStatus
 }

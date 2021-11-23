@@ -29,9 +29,6 @@ class CheckoutServices {
         // add each item to order items table and remove each corresponding cart item
         orderItems.forEach(async (orderItem) => {
             await orderDataLayer.createNewOrderItem(orderObj.id, orderItem.book_id, orderItem.quantity)
-            if (status === "paid") {
-                await bookDataLayer.changeStock(orderItem.book_id, orderItem.quantity);
-            }
             await cartServices.remove(orderItem.book_id);
         });
     }

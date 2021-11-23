@@ -2,11 +2,15 @@ let timer;
 const express = require("express");
 const CartServices = require("../../services/cart_services");
 const CheckoutServices = require("./../../services/checkout_services")
+const orderDataLayer = require("./../../dal/orders")
 const router = express.Router();
 const Stripe = require("stripe")(process.env.STRIPE_KEY_SECRET);
 const {
   checkIfAuthenticatedJWT
 } = require("../../middlewares");
+const {
+  updateOrderStatus
+} = require("../../dal/orders");
 router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
 
   // in stripe -- a payment object represents one transaction
@@ -55,30 +59,17 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
         orders: metaData,
         customer_id: req.query.customer_id,
       },
+      expires_at: Math.floor(Date.now() / 1000) + 3600,
     };
 
 
     // create the payment session with the payment object and send to client
     let stripeSession = await Stripe.checkout.sessions.create(payment);
 
-    // if no completed checkout after 10 min, expire session
-    timer = setTimeout(async function () {
-      const session = await Stripe.checkout.sessions.retrieve(
-        stripeSession.id
-      );
-      // console.log("SESSION", session)
-      if (session.payment_status === "unpaid") {
-        // const expiredSession = await Stripe.checkout.sessions.expire(
-        //   session.id
-        // );
-        const paymentIntent = await Stripe.paymentIntents.cancel(
-          session.payment_intent
-        );
-        console.log("EXPIRED SESSION", paymentIntent)
-        let checkout = new CheckoutServices(session.id);
-        checkout.process_checkout(session, session.payment_status);
-      }
-    }, 600000);
+    // add checkout to orders table
+    let checkout = new CheckoutServices(session.id);
+    checkout.process_checkout(session.session.payment_status);
+    await bookDataLayer.changeStock(orderItem.book_id, orderItem.quantity);
     res.send({
       sessionId: stripeSession.id,
       publishableKey: process.env.STRIPE_KEY_PUBLISHABLE,
@@ -93,12 +84,12 @@ router.post('/process_payment', express.raw({
   // req contains data send to this endpoint from Stripe
   // and is only sent when Stripe completes a payment
   let payload = req.body;
-  // console.log("PAYLOAD", payload)
+
   // we need an endpointSecret to verify that this request is actually sent from stripe
   let endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
-  // console.log("ENDPOINT SECRET= ", endpointSecret)
+
   let sigHeader = req.headers['stripe-signature'];
-  // console.log("SIG HEADER= ", sigHeader);
+
   let event;
   try {
     event = Stripe.webhooks.constructEvent(payload, sigHeader, endpointSecret);
@@ -113,16 +104,16 @@ router.post('/process_payment', express.raw({
   // if the stripe request is verified to be from stripe
   // then we recreate payment session
 
-
-
   switch (event.type) {
     case 'checkout.session.completed':
-      const session = event.data.object;
+      let session = event.data.object;
       console.log("STRIPE SESSION = ", session);
-      // create new order
-      let checkout = new CheckoutServices(session.id);
-      checkout.process_checkout(session, session.payment_status);
+      // create payment status
+      orderDataLayer.updateOrderStatus(session_id, "paid");
       break;
+    case 'checkout.session.expired':
+      session = event.data.object;
+      orderDataLayer.updateOrderStatus(session_id, "unpaid");
     default:
       console.log(`Unhandled event type ${event.type}`);
 
