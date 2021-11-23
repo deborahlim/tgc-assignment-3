@@ -11,6 +11,15 @@ const getAllBooks = async () => {
         withRelated: ["authors", "formats", "genres", "tags", "publishers"]
     })
 }
+
+const getBookByTitle = async (title) => {
+    Book.collection().where(
+        "title", "like", "%" + req.query.title + "%"
+    ).fetch({
+        withRelated: ["authors", "formats", "genres", "tags", "publishers"]
+    });
+}
+
 const getAllRelated = async (model) => {
     return await model.fetchAll().map((row) => {
         return [row.get("id"), row.get("name")]
@@ -76,5 +85,6 @@ module.exports = {
     getPublisherById,
     getGenreById,
     getTagById,
-    changeStock
+    changeStock,
+    getBookByTitle,
 }

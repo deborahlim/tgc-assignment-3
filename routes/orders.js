@@ -21,7 +21,7 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
     let allOrderStatuses = await ordersDataLayer.getRelatedOrderStatus();
     (await allOrderStatuses).unshift([0, "All Statuses"]);
     let searchForm = createSearchOrdersForm(allOrderStatuses);
-    let q = Order.collection();
+    let q = Order.collection().orderBy("createdAt", "ASC");
     searchForm.handle(req, {
         empty: async (form) => {
             let orders = await q.fetch({

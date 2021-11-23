@@ -1,3 +1,4 @@
+let timer;
 const express = require("express");
 const CartServices = require("../../services/cart_services");
 const CheckoutServices = require("./../../services/checkout_services")
@@ -6,8 +7,6 @@ const Stripe = require("stripe")(process.env.STRIPE_KEY_SECRET);
 const {
   checkIfAuthenticatedJWT
 } = require("../../middlewares");
-const bookDataLayer = require("../../dal/books");
-const orderDataLayer = require("../../dal/orders");
 router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
 
   // in stripe -- a payment object represents one transaction
@@ -63,7 +62,7 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
     let stripeSession = await Stripe.checkout.sessions.create(payment);
 
     // if no completed checkout after 10 min, expire session
-    setTimeout(async function () {
+    timer = setTimeout(async function () {
       const session = await Stripe.checkout.sessions.retrieve(
         stripeSession.id
       );
@@ -86,7 +85,6 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
     });
   }
 });
-
 
 // webhook which Stripe will call to process the payment
 router.post('/process_payment', express.raw({

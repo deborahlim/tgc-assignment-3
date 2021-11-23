@@ -5,9 +5,18 @@ const {
 } = require("../models")
 
 const getAllOrders = async () => {
-    return await Order.collection().fetch({
+    return await Order.collection().orderBy("createdAt", "ASC").fetch({
         withRelated: ["customers", "orderStatuses"]
     })
+}
+
+const getOrdersByStatus = async (status) => {
+    let q = Order.collection().orderBy("createdAt", "ASC").where("order_status_id", "=", status);
+
+    let orders = await q.fetch({
+        withRelated: ["customers", "orderStatuses"]
+    })
+    return orders
 }
 
 const getRelatedOrderStatus = async () => {
@@ -44,9 +53,9 @@ const createNewOrderItem = async (orderId, bookId, quantity) => {
 const getOrder = async (customerId) => {
     return await Order.collection().where({
         customer_id: customerId
-    }).fetch({
+    }).orderBy("createdAt", "ASC").fetch({
         require: false,
-        withRelated: ["orderItems.books.formats", "orderItems.books.publishers", "orderItems.books.authors"]
+        withRelated: ["orderItems.books.formats", "orderItems.books.publishers", "orderItems.books.authors", "orderStatuses"]
     });
 }
 
@@ -101,5 +110,6 @@ module.exports = {
     getOrderItemByOrder,
     getOrderItemByBookId,
     deleteOrder,
-    getRelatedOrderStatus
+    getRelatedOrderStatus,
+    getOrdersByStatus
 }
