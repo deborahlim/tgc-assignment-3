@@ -1,5 +1,5 @@
 const cartDataLayer = require('../dal/cart_items')
-const bookDataLayer = require("../dal/books")
+
 const orderDataLayer = require("../dal/orders")
 const CartServices = require("./cart_services")
 class CheckoutServices {
@@ -14,17 +14,13 @@ class CheckoutServices {
             payment_status,
             amount_total
         } = stripeSession
-        if (status === "paid") {
-            payment_status = 1;
-        } else if (status === "unpaid") {
+
+        if (status === "unpaid") {
             payment_status = 4;
         }
         let order = await orderDataLayer.createNewOrder(id, metadata.customer_id, payment_status, amount_total);
         let orderObj = order.toJSON()
-        // console.log("ORDER OBJECT = ", orderObj)
         let orderItems = JSON.parse(metadata.orders);
-        // console.log("ORDER ID=", orderObj.id)
-        // console.log("ORDER ITEMS = ", orderItems)
         let cartServices = new CartServices(orderObj.customer_id);
         // add each item to order items table and remove each corresponding cart item
         orderItems.forEach(async (orderItem) => {

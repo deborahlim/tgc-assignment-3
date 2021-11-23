@@ -1,5 +1,5 @@
-let timer;
 const express = require("express");
+const bookDataLayer = require("./../../dal/books")
 const CartServices = require("../../services/cart_services");
 const CheckoutServices = require("./../../services/checkout_services")
 const orderDataLayer = require("./../../dal/orders")
@@ -8,9 +8,7 @@ const Stripe = require("stripe")(process.env.STRIPE_KEY_SECRET);
 const {
   checkIfAuthenticatedJWT
 } = require("../../middlewares");
-const {
-  updateOrderStatus
-} = require("../../dal/orders");
+
 router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
 
   // in stripe -- a payment object represents one transaction
@@ -67,9 +65,8 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
     let stripeSession = await Stripe.checkout.sessions.create(payment);
 
     // add checkout to orders table
-    let checkout = new CheckoutServices(session.id);
-    checkout.process_checkout(session.session.payment_status);
-    await bookDataLayer.changeStock(orderItem.book_id, orderItem.quantity);
+    let checkout = new CheckoutServices(stripeSession.id);
+    checkout.process_checkout(stripeSession, stripeSession.payment_status);
     res.send({
       sessionId: stripeSession.id,
       publishableKey: process.env.STRIPE_KEY_PUBLISHABLE,
@@ -109,11 +106,15 @@ router.post('/process_payment', express.raw({
       let session = event.data.object;
       console.log("STRIPE SESSION = ", session);
       // create payment status
-      orderDataLayer.updateOrderStatus(session_id, "paid");
+      let orderItems = JSON.parse(session.metadata.orders);
+      orderItems.forEach(async (orderItem) => {
+        await bookDataLayer.changeStock(orderItem.book_id, orderItem.quantity);
+      })
+      orderDataLayer.updateOrderStatus(session.id, "paid");
       break;
     case 'checkout.session.expired':
-      session = event.data.object;
-      orderDataLayer.updateOrderStatus(session_id, "unpaid");
+      let expiredSession = event.data.object;
+      orderDataLayer.updateOrderStatus(expiredSession.id, "expired");
     default:
       console.log(`Unhandled event type ${event.type}`);
 

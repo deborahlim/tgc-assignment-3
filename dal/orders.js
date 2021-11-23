@@ -27,10 +27,11 @@ const getRelatedOrderStatus = async () => {
 
 const updateOrderStatus = async (id, newStatus) => {
     let order = await getOrderById(id)
-    if (newStatus === "expired") {
-        order.set("order_status_id", 3)
-    } else if (newStatus === "paid") {
+
+    if (newStatus === "paid") {
         order.set("order_status_id", 1)
+    } else if (newStatus === "expired") {
+        order.set("order_status_id", 5)
     }
     await order.save();
 }
