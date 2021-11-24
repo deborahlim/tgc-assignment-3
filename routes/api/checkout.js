@@ -1,5 +1,4 @@
 const express = require("express");
-const bookDataLayer = require("./../../dal/books")
 const CartServices = require("../../services/cart_services");
 const CheckoutServices = require("./../../services/checkout_services")
 const orderDataLayer = require("./../../dal/orders")
@@ -57,9 +56,54 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
         orders: metaData,
         customer_id: req.query.customer_id,
       },
+      shipping_address_collection: {
+        allowed_countries: ['SG'],
+      },
+      shipping_options: [{
+          shipping_rate_data: {
+            type: 'fixed_amount',
+            fixed_amount: {
+              amount: 0,
+              currency: 'sgd',
+            },
+            display_name: 'Free shipping',
+            // Delivers between 5-7 business days
+            delivery_estimate: {
+              minimum: {
+                unit: 'business_day',
+                value: 5,
+              },
+              maximum: {
+                unit: 'business_day',
+                value: 7,
+              },
+            }
+          }
+        },
+        {
+          shipping_rate_data: {
+            type: 'fixed_amount',
+            fixed_amount: {
+              amount: 1500,
+              currency: 'sgd',
+            },
+            display_name: 'Next day air',
+            // Delivers in exactly 1 business day
+            delivery_estimate: {
+              minimum: {
+                unit: 'business_day',
+                value: 1,
+              },
+              maximum: {
+                unit: 'business_day',
+                value: 1,
+              },
+            }
+          }
+        },
+      ],
       expires_at: Math.floor(Date.now() / 1000) + 3600,
     };
-
 
     // create the payment session with the payment object and send to client
     let stripeSession = await Stripe.checkout.sessions.create(payment);
@@ -98,17 +142,15 @@ router.post('/process_payment', express.raw({
       'error': e.message
     })
   }
-  let session = event.data.object;
-  let checkout = new CheckoutServices(session);
   // if the stripe request is verified to be from stripe
   // then we recreate payment session
+  let session = event.data.object;
+  let checkout = new CheckoutServices(session);
   switch (event.type) {
     case 'checkout.session.completed':
       checkout.updateCheckout();
       break;
     case 'checkout.session.expired':
-      // let expiredSession = event.data.object;
-      // let checkout = new CheckoutServices(expiredSession);
       checkout.updateCheckout();
       break;
     default:

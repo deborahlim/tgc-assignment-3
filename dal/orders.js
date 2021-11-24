@@ -17,24 +17,28 @@ const getRelatedOrderStatus = async () => {
     })
 }
 
-const updateOrderStatus = async (id, newStatus) => {
+const updateOrderStatus = async (id, newStatus, shippingAddress, shippingCost) => {
+    console.log(newStatus, shippingAddress, shippingCost);
     let order = await getOrderById(id)
+    console.log(order)
     console.log(order.toJSON());
     if (newStatus === "complete") {
-        order.set("order_status_id", 1)
-    } else if (newStatus === "expired") {
-        order.set("order_status_id", 5)
+        await order.set("order_status_id", 1)
+        await order.set("shippingAddress", shippingAddress)
+        await order.set("shippingCost", shippingCost / 100)
+    } else if (newStatus === "expired" || newStatus === "unpaid") {
+        await order.set("order_status_id", 4)
     }
     await order.save();
 }
 
-const createNewOrder = async (id, customerId, status, amountTotal) => {
+const createNewOrder = async (id, customerId, status, amountTotal, shippingAddress, shippingCost) => {
     let order = new Order({
         id: id,
         customer_id: customerId,
         status: status,
         amountTotal: amountTotal / 100,
-        order_status_id: status
+        order_status_id: status,
     })
     order.set("createdAt", new Date());
     await order.save(null, {

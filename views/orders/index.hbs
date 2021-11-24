@@ -24,6 +24,8 @@
                                 <th scope="col">Customer Username</th>
                                 <th scope="col">Order Status</th>
                                 <th scope="col">Amount Total ($)</th>
+                                <th scope="col">Shipping Address</th>
+                                <th scope="col">Shipping Cost</th>
                                 <th scope="col"></th>
                                 <th scope="col"></th>
                             </tr>
@@ -40,6 +42,8 @@
                                     <td>{{this.customers.username}}</td>
                                     <td>{{this.orderStatuses.name}}</td>
                                     <td>${{this.amountTotal}}</td>
+                                    <td>{{this.shippingAddress}}</td>
+                                    <td>${{this.shippingCost}}</td>
                                     <td>
                                         <a href="/orders/{{this.id}}/update" class="btn btn-primary btn-sm">Update</a>
 

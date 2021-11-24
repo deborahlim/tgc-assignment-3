@@ -33,7 +33,16 @@ const getCustomerByUsername = async (username) => {
     })
 }
 
+const getCustomerById = async (id) => {
+    return await Customer.where({
+        id: id
+    }).fetch({
+        require: false,
+    })
+}
+
 module.exports = {
     createNewCustomer,
-    getCustomerByUsername
+    getCustomerByUsername,
+    getCustomerById
 }
