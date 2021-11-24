@@ -32,6 +32,7 @@ class CheckoutServices {
             id,
             metadata,
             status,
+            amount_total,
             shipping,
             total_details
         } = this.stripeSession
@@ -41,7 +42,7 @@ class CheckoutServices {
             shippingAddress = shipping.address.line1 + ", Singapore " + shipping.address.postal_code;
         }
         if (status === "complete") {
-            orderDataLayer.updateOrderStatus(id, status, shippingAddress, total_details.amount_shipping);
+            orderDataLayer.updateOrderStatus(id, status, amount_total, shippingAddress, total_details.amount_shipping);
         }
         if (status === "expired")
             orderItems.forEach(async (orderItem) => {
