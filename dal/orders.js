@@ -10,14 +10,6 @@ const getAllOrders = async () => {
     })
 }
 
-const getOrdersByStatus = async (status) => {
-    let q = Order.collection().orderBy("createdAt", "ASC").where("order_status_id", "=", status);
-
-    let orders = await q.fetch({
-        withRelated: ["customers", "orderStatuses"]
-    })
-    return orders
-}
 
 const getRelatedOrderStatus = async () => {
     return await OrderStatus.fetchAll().map((row) => {
@@ -27,8 +19,8 @@ const getRelatedOrderStatus = async () => {
 
 const updateOrderStatus = async (id, newStatus) => {
     let order = await getOrderById(id)
-
-    if (newStatus === "paid") {
+    console.log(order.toJSON());
+    if (newStatus === "complete") {
         order.set("order_status_id", 1)
     } else if (newStatus === "expired") {
         order.set("order_status_id", 5)
@@ -122,6 +114,5 @@ module.exports = {
     getOrderItemByBookId,
     deleteOrder,
     getRelatedOrderStatus,
-    getOrdersByStatus,
     updateOrderStatus
 }

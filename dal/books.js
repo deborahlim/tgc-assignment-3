@@ -67,13 +67,18 @@ const getTagById = async (tagId) => {
     })
 }
 
-const changeStock = async (bookId, quantity) => {
+const changeStock = async (bookId, quantity, status) => {
     let book = await Book.where({
         id: parseInt(bookId),
     }).fetch({
         require: true
     });
-    book.set("stock", book.get("stock") - quantity)
+    if (status === "expired") {
+        book.set("stock", book.get("stock") + quantity)
+    } else {
+        book.set("stock", book.get("stock") - quantity)
+    }
+
     book.save();
 }
 

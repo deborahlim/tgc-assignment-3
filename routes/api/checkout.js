@@ -65,8 +65,8 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
     let stripeSession = await Stripe.checkout.sessions.create(payment);
 
     // add checkout to orders table
-    let checkout = new CheckoutServices(stripeSession.id);
-    checkout.process_checkout(stripeSession, stripeSession.payment_status);
+    let checkout = new CheckoutServices(stripeSession);
+    checkout.processCheckout();
     res.send({
       sessionId: stripeSession.id,
       publishableKey: process.env.STRIPE_KEY_PUBLISHABLE,
@@ -98,23 +98,19 @@ router.post('/process_payment', express.raw({
       'error': e.message
     })
   }
+  let session = event.data.object;
+  let checkout = new CheckoutServices(session);
   // if the stripe request is verified to be from stripe
   // then we recreate payment session
-
   switch (event.type) {
     case 'checkout.session.completed':
-      let session = event.data.object;
-      console.log("STRIPE SESSION = ", session);
-      // create payment status
-      let orderItems = JSON.parse(session.metadata.orders);
-      orderItems.forEach(async (orderItem) => {
-        await bookDataLayer.changeStock(orderItem.book_id, orderItem.quantity);
-      })
-      orderDataLayer.updateOrderStatus(session.id, "paid");
+      checkout.updateCheckout();
       break;
     case 'checkout.session.expired':
-      let expiredSession = event.data.object;
-      orderDataLayer.updateOrderStatus(expiredSession.id, "expired");
+      // let expiredSession = event.data.object;
+      // let checkout = new CheckoutServices(expiredSession);
+      checkout.updateCheckout();
+      break;
     default:
       console.log(`Unhandled event type ${event.type}`);
 
