@@ -15,11 +15,11 @@ router.get("/", async (req, res) => {
     let users = await userDataLayer.getAllUsers();
     if (users.length === 0) {
         const registerForm = createRegisterOwnerForm();
-        res.render("/users/registerOwner", {
+        res.render("/landing/index", {
             form: registerForm.toHTML(bootstrapField),
         })
     } else {
-        res.redirect("/login");
+        res.redirect("/users/login");
     }
 })
 
@@ -44,7 +44,7 @@ router.post("/", async (req, res) => {
                 "error_messages",
                 "An error occured while creating a new owner. Please fill in the form again."
             );
-            res.render("users/registerOwner", {
+            res.render("landing/index", {
                 form: form.toHTML(bootstrapField)
             })
         }
