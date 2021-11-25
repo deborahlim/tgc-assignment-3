@@ -250,6 +250,45 @@ const createAuthorSearchForm = () => {
     })
 }
 
+const createRegisterOwnerForm = (roles) => {
+    return forms.create({
+        username: fields.string({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ["form-label mt-3"],
+            },
+            validators: [validators.rangelength(4, 12)]
+        }),
+        email: fields.string({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ["form-label mt-3"],
+            },
+            validators: [validators.email()]
+        }),
+        password: fields.password({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ["form-label mt-3"],
+            },
+            validators: [validators.minlength(7), validators.alphanumeric()]
+        }),
+        confirm_password: fields.password({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ["form-label mt-3"],
+            },
+            validators: [validators.matchField("password")],
+        }),
+    }, {
+        validatePastFirstError: true
+    });
+}
+
 const registerUserForm = (roles) => {
     return forms.create({
         username: fields.string({
@@ -577,5 +616,6 @@ module.exports = {
     createSearchBooksForm,
     createAuthorSearchForm,
     createUpdateOrderStatusForm,
-    createSearchOrdersForm
+    createSearchOrdersForm,
+    createRegisterOwnerForm
 }

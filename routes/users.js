@@ -14,13 +14,86 @@ const {
     registerUserForm,
     bootstrapField,
     createUpdateUserForm,
-    createUpdateUserAccountForm
+    createUpdateUserAccountForm,
+    createLoginForm,
 } = require('../forms');
 
 const {
     checkIfAuthenticated,
     checkRoles
 } = require("../middlewares")
+
+router.get("/login", async (req, res) => {
+    let loginForm = createLoginForm();
+    if (req.session.currentUser) {
+        res.redirect("/books")
+    } else {
+        res.render("users/login", {
+            form: loginForm.toHTML(bootstrapField)
+        })
+    }
+})
+
+router.post("/login", async (req, res) => {
+    const loginForm = createLoginForm();
+    loginForm.handle(req, {
+        success: async (form) => {
+            //process the form
+            // find the user by email and password
+            let currentUser = await User.where({
+                email: form.data.email,
+            }).fetch({
+                require: false,
+                withRelated: ["roles"]
+            });
+
+            // console.log( user.toJSON() )
+            if (!currentUser) {
+                // console.log( "User does not exist" )
+                req.flash(
+                    "error_messages",
+                    "Sorry, the authentication details you have provided does not work"
+                );
+                res.redirect("/login")
+            } else {
+                // console.log( "User Exists" )
+                if (currentUser.get("password") === getHashedPassword(form.data.password)) {
+                    // console.log( req.session.user )
+                    req.session.currentUser = {
+                        id: currentUser.get("id"),
+                        username: currentUser.get("username"),
+                        email: currentUser.get("email"),
+                        role: currentUser.related("roles").toJSON()
+                    };
+                    // console.log(req.session.currentUser)
+                    req.flash(
+                        "success_messages",
+                        "Welcome back, " + currentUser.get("username")
+                    );
+                    // console.log( "LOGIN REQUEST = ", req.session );
+                    // console.log( "THE USER IS: ", req.session.user )
+                    res.redirect(`/books`);
+                } else {
+                    // console.log( "Password is not correct" )
+                    req.flash(
+                        "error_messages",
+                        "Sorry, the authentication details you provided does not work"
+                    );
+                    res.redirect("/");
+                }
+            }
+        },
+        error: (form) => {
+            req.flash(
+                "error_messages",
+                "There are some problems with logging you in. Please fill in the form again."
+            );
+            res.render("landing/index", {
+                form: form.toHTML(bootstrapField),
+            });
+        },
+    });
+});
 
 router.get("/", checkIfAuthenticated, async (req, res) => {
     let users = await userDataLayer.getAllUsers();
@@ -32,15 +105,18 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
     })
 })
 
-router.get("/register", async (req, res) => {
+router.get("/register", checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
     let allRoles = await userDataLayer.getAllRoles()
     const registerForm = registerUserForm(allRoles);
     res.render("users/register", {
         form: registerForm.toHTML(bootstrapField),
     })
 })
-// checkIfAuthenticated, checkRoles(['Owner'])
-router.post('/register', async (req, res) => {
+
+
+
+
+router.post('/register', checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
     let allRoles = await userDataLayer.getAllRoles()
     const registerForm = registerUserForm(allRoles);
 

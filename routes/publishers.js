@@ -17,7 +17,7 @@ const publisherDataLayer = require("./../dal/publishers")
 
 router.get("/", checkIfAuthenticated, async (req, res) => {
 
-    let publishers = publisherDataLayer.getAllPublishers();
+    let publishers = await publisherDataLayer.getAllPublishers();
     // console.log(publishers.toJSON())
     res.render("publishers/index", {
         publishers: publishers.toJSON(),
