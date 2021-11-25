@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
     let users = await userDataLayer.getAllUsers();
     if (users.length === 0) {
         const registerForm = createRegisterOwnerForm();
-        res.render("/landing/index", {
+        res.render("landing/index", {
             form: registerForm.toHTML(bootstrapField),
         })
     } else {
