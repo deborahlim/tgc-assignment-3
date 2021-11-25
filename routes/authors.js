@@ -14,7 +14,7 @@ const {
   checkIfAuthenticated,
   checkRoles
 } = require("./../middlewares");
-const dataLayer = require("./../dal/books");
+const authorDataLayer = require("./../dal/authors");
 
 
 router.get("/", checkIfAuthenticated, async (req, res) => {
@@ -103,9 +103,9 @@ router.get(
   checkRoles(["Manager", "Owner"]),
   async (req, res) => {
     // fetch the author that we want to delete
-    const author = await dataLayer.getAuthorById(req.params.author_id);
+    const author = await authorDataLayer.getAuthorById(req.params.author_id);
     const match = await author.related("books");
-    console.log(match.toJSON())
+
     if (match.length === 0) {
       res.render("authors/delete", {
         author: author.toJSON(),
@@ -122,7 +122,7 @@ router.post(
   checkIfAuthenticated,
   checkRoles(["Manager", "Owner"]),
   async (req, res) => {
-    const author = await dataLayer.getAuthorById(req.params.author_id);
+    const author = await authorDataLayer.getAuthorById(req.params.author_id);
     await author.destroy();
     res.redirect("/authors");
   }

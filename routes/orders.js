@@ -19,7 +19,7 @@ const dataLayer = require("./../dal/orders");
 
 router.get("/", checkIfAuthenticated, async (req, res) => {
     let allOrderStatuses = await ordersDataLayer.getRelatedOrderStatus();
-    (await allOrderStatuses).unshift([0, "All Statuses"]);
+    allOrderStatuses.unshift([0, "All Statuses"]);
     let searchForm = createSearchOrdersForm(allOrderStatuses);
     let q = Order.collection().orderBy("createdAt", "ASC");
     searchForm.handle(req, {
@@ -59,6 +59,10 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
             }
             if (form.data.customer_id && form.data.customer_id !== "0") {
                 q = q.where("customer_id", "=", form.data.customer_id)
+            }
+            if (form.data.customerUsername) {
+                q = q.query('join', 'customers', 'customer_id', 'customers.id')
+                    .where('customers.username', 'like', '%' + form.data.customerUsername + '%')
             }
             if (form.data.minAmount) {
                 q = q.where("amountTotal", ">=", form.data.minAmount)

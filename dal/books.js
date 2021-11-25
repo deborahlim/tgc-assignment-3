@@ -1,9 +1,6 @@
 const {
     Book,
-    Author,
     Publisher,
-    Genre,
-    Tag
 } = require("../models")
 
 const getAllBooks = async () => {
@@ -12,7 +9,7 @@ const getAllBooks = async () => {
     })
 }
 
-const getBookByTitle = async (title) => {
+const getBookByTitle = async () => {
     Book.collection().where(
         "title", "like", "%" + req.query.title + "%"
     ).fetch({
@@ -35,42 +32,6 @@ const getBookById = async (bookId) => {
     })
 }
 
-const getAuthorById = async (authorId) => {
-    return await Author.where({
-        id: parseInt(authorId)
-    }).fetch({
-        require: true,
-        withRelated: ["books"]
-    })
-}
-
-const getPublisherById = async (publisherId) => {
-    return await Publisher.where({
-        id: parseInt(publisherId)
-    }).fetch({
-        require: true,
-        withRelated: ["books"]
-    })
-}
-
-const getGenreById = async (genreId) => {
-    return await Genre.where({
-        id: parseInt(genreId)
-    }).fetch({
-        require: true,
-        withRelated: ["books"]
-    })
-}
-
-const getTagById = async (tagId) => {
-    return await Tag.where({
-        id: parseInt(tagId)
-    }).fetch({
-        require: true,
-        withRelated: ["books"]
-    })
-}
-
 const changeStock = async (bookId, quantity, status) => {
     let book = await Book.where({
         id: parseInt(bookId),
@@ -90,10 +51,6 @@ module.exports = {
     getAllBooks,
     getAllRelated,
     getBookById,
-    getAuthorById,
-    getPublisherById,
-    getGenreById,
-    getTagById,
     changeStock,
     getBookByTitle,
 }

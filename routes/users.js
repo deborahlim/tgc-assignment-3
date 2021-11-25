@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const dataLayer = require("../dal/users")
+const userDataLayer = require("../dal/users")
 const {
     getHashedPassword
 } = require("../utils/hash")
@@ -23,9 +23,7 @@ const {
 } = require("../middlewares")
 
 router.get("/", checkIfAuthenticated, async (req, res) => {
-    let users = await User.collection().fetch({
-        withRelated: ["roles"]
-    });
+    let users = await userDataLayer.getAllUsers();
     res.render("users/index", {
         users: users.toJSON(),
         active: {
@@ -35,7 +33,7 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
 })
 
 router.get("/register", checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
-    let allRoles = await dataLayer.getAllRoles()
+    let allRoles = await userDataLayer.getAllRoles()
     const registerForm = registerUserForm(allRoles);
     res.render("users/register", {
         form: registerForm.toHTML(bootstrapField),
@@ -43,7 +41,7 @@ router.get("/register", checkIfAuthenticated, checkRoles(['Owner']), async (req,
 })
 
 router.post('/register', checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
-    let allRoles = await dataLayer.getAllRoles()
+    let allRoles = await userDataLayer.getAllRoles()
     const registerForm = registerUserForm(allRoles);
 
     registerForm.handle(req, {
@@ -74,7 +72,7 @@ router.post('/register', checkIfAuthenticated, checkRoles(['Owner']), async (req
 
 
 router.get("/:user_id/account", checkIfAuthenticated, async (req, res) => {
-    let currentUser = await dataLayer.getUserById(req.session.currentUser.id);
+    let currentUser = await userDataLayer.getUserById(req.session.currentUser.id);
     // console.log( user.toJSON() )
     res.render("users/account", {
         currentUser: currentUser.toJSON(),
@@ -86,7 +84,7 @@ router.get("/:user_id/account", checkIfAuthenticated, async (req, res) => {
 })
 
 router.get("/:user_id/account/update", checkIfAuthenticated, async (req, res) => {
-    let user = await dataLayer.getUserById(req.params.user_id);
+    let user = await userDataLayer.getUserById(req.params.user_id);
     let updateForm = createUpdateUserAccountForm();
     updateForm.fields.username.value = user.get("username")
     updateForm.fields.email.value = user.get("email")
@@ -97,7 +95,7 @@ router.get("/:user_id/account/update", checkIfAuthenticated, async (req, res) =>
 })
 
 router.post("/:user_id/account/update", checkIfAuthenticated, async (req, res) => {
-    let user = await dataLayer.getUserById(req.params.user_id);
+    let user = await userDataLayer.getUserById(req.params.user_id);
     let updateAccountForm = createUpdateUserAccountForm();
     updateAccountForm.handle(req, {
         success: async (form) => {
@@ -129,8 +127,8 @@ router.post("/:user_id/account/update", checkIfAuthenticated, async (req, res) =
 })
 
 router.get("/:user_id/update", checkIfAuthenticated, checkRoles(["Owner"]), async (req, res) => {
-    let allRoles = await dataLayer.getAllRoles()
-    const user = await dataLayer.getUserById(req.params.user_id)
+    let allRoles = await userDataLayer.getAllRoles()
+    const user = await userDataLayer.getUserById(req.params.user_id)
     const updateUserForm = createUpdateUserForm(allRoles)
     updateUserForm.fields.username.value = user.get("username")
     updateUserForm.fields.email.value = user.get("email")
@@ -143,8 +141,8 @@ router.get("/:user_id/update", checkIfAuthenticated, checkRoles(["Owner"]), asyn
 })
 
 router.post("/:user_id/update", checkIfAuthenticated, checkRoles(["Owner"]), async (req, res) => {
-    let allRoles = await dataLayer.getAllRoles()
-    let user = await dataLayer.getUserById(req.params.user_id);
+    let allRoles = await userDataLayer.getAllRoles()
+    let user = await userDataLayer.getUserById(req.params.user_id);
     let updateForm = createUpdateUserForm(allRoles);
     updateForm.handle(req, {
         success: async (form) => {
@@ -175,7 +173,7 @@ router.post("/:user_id/update", checkIfAuthenticated, checkRoles(["Owner"]), asy
 
 router.get("/:user_id/delete", checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
     // fetch the user that we want to delete
-    const user = await dataLayer.getUserById(req.params.user_id)
+    const user = await userDataLayer.getUserById(req.params.user_id)
 
     res.render("users/delete", {
         user: user.toJSON()
@@ -184,7 +182,7 @@ router.get("/:user_id/delete", checkIfAuthenticated, checkRoles(['Owner']), asyn
 
 router.post("/:user_id/delete", checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
     // fetch the user that we want to delete
-    const user = await dataLayer.getUserById(req.params.user_id)
+    const user = await userDataLayer.getUserById(req.params.user_id)
     await user.destroy();
     res.redirect("/users");
 })

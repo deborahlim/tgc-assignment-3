@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router();
-
+const genreDataLayer = require("../dal/genres");
 const {
     Genre
 } = require("../models")
@@ -13,11 +13,11 @@ const {
     checkIfAuthenticated,
     checkRoles
 } = require("../middlewares")
-const dataLayer = require("../dal/books")
+
 
 router.get("/", checkIfAuthenticated, async (req, res) => {
 
-    let genres = await Genre.collection().fetch()
+    let genres = await genreDataLayer.getAllGenres();
     // console.log( genres.toJSON() )
     res.render("genres/index", {
         genres: genres.toJSON(),
@@ -46,7 +46,7 @@ router.post("/create", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), a
         },
         error: async (form) => {
             res.render("genres/create", {
-                form: genreForm.toHTML(bootstrapField)
+                form: form.toHTML(bootstrapField)
             })
 
         }
@@ -55,7 +55,7 @@ router.post("/create", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), a
 
 router.get("/:genre_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
     // fetch the genre that we want to delete
-    const genre = await dataLayer.getGenreById(req.params.genre_id)
+    const genre = await genreDataLayer.getGenreById(req.params.genre_id)
     const match = await genre.related("books");
     if (match.length === 0) {
         res.render("genres/delete", {
@@ -69,7 +69,7 @@ router.get("/:genre_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Ow
 
 
 router.post("/:genre_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
-    const genre = await dataLayer.getGenreById(req.params.genre_id)
+    const genre = await genreDataLayer.getGenreById(req.params.genre_id)
     await genre.destroy()
     res.redirect("/genres")
 })

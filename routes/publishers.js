@@ -13,11 +13,11 @@ const {
     checkIfAuthenticated,
     checkRoles
 } = require("./../middlewares")
-const dataLayer = require("./../dal/books")
+const publisherDataLayer = require("./../dal/publishers")
 
 router.get("/", checkIfAuthenticated, async (req, res) => {
 
-    let publishers = await Publisher.collection().fetch()
+    let publishers = publisherDataLayer.getAllPublishers();
     // console.log(publishers.toJSON())
     res.render("publishers/index", {
         publishers: publishers.toJSON(),
@@ -46,7 +46,7 @@ router.post("/create", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), a
         },
         error: async (form) => {
             res.render("publishers/create", {
-                form: publisherForm.toHTML(bootstrapField)
+                form: form.toHTML(bootstrapField)
             })
 
         }
@@ -55,7 +55,7 @@ router.post("/create", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), a
 
 router.get("/:publisher_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
     // fetch the publisher that we want to delete
-    const publisher = await dataLayer.getPublisherById(req.params.publisher_id)
+    const publisher = await publisherDataLayer.getPublisherById(req.params.publisher_id)
     const match = await publisher.related("books");
     if (match.length === 0) {
         res.render("publishers/delete", {
@@ -69,7 +69,7 @@ router.get("/:publisher_id/delete", checkIfAuthenticated, checkRoles(["Manager",
 
 
 router.post("/:publisher_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
-    const publisher = await dataLayer.getPublisherById(req.params.publisher_id)
+    const publisher = await publisherDataLayer.getPublisherById(req.params.publisher_id)
     await publisher.destroy()
     res.redirect("/publishers")
 })

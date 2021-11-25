@@ -13,11 +13,11 @@ const {
     checkIfAuthenticated,
     checkRoles
 } = require("../middlewares")
-const dataLayer = require("../dal/books")
+const tagsDataLayer = require("../dal/tags")
 
 router.get("/", checkIfAuthenticated, async (req, res) => {
 
-    let tags = await Tag.collection().fetch()
+    let tags = await tagsDataLayer.getAllTags()
     // console.log( tags.toJSON() )
     res.render("tags/index", {
         tags: tags.toJSON(),
@@ -46,7 +46,7 @@ router.post("/create", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), a
         },
         error: async (form) => {
             res.render("tags/create", {
-                form: tagForm.toHTML(bootstrapField)
+                form: form.toHTML(bootstrapField)
             })
 
         }
@@ -55,7 +55,7 @@ router.post("/create", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), a
 
 router.get("/:tag_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
     // fetch the tag that we want to delete
-    const tag = await dataLayer.getTagById(req.params.tag_id)
+    const tag = await tagsDataLayer.getTagById(req.params.tag_id)
     res.render("tags/delete", {
         tag: tag.toJSON()
     })
@@ -63,7 +63,7 @@ router.get("/:tag_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owne
 
 
 router.post("/:tag_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
-    const tag = await dataLayer.getTagById(req.params.tag_id)
+    const tag = await tagsDataLayer.getTagById(req.params.tag_id)
     await tag.destroy()
     res.redirect("/tags")
 })
