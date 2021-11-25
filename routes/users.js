@@ -260,7 +260,13 @@ router.post("/:user_id/delete", checkIfAuthenticated, checkRoles(['Owner']), asy
     // fetch the user that we want to delete
     const user = await userDataLayer.getUserById(req.params.user_id)
     await user.destroy();
-    res.redirect("/users");
+    const users = await userDataLayer.getAllUsers();
+    if (users.length === 0) {
+        res.redirect("/logout");
+    } else {
+        res.redirect("/users");
+    }
+
 })
 
 router.get("/logout", checkIfAuthenticated, async (req, res) => {
