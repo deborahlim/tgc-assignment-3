@@ -1,7 +1,7 @@
 {
     "files.exclude": {
         "**/.DS_Store": true,
-        "**/.git": true,
+        "**/.git": false,
         "**/.github": true,
         "**/.gitp*": true,
         "**/.hg": true,
