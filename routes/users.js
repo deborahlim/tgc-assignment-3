@@ -32,15 +32,15 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
     })
 })
 
-router.get("/register", checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
+router.get("/register", async (req, res) => {
     let allRoles = await userDataLayer.getAllRoles()
     const registerForm = registerUserForm(allRoles);
     res.render("users/register", {
         form: registerForm.toHTML(bootstrapField),
     })
 })
-
-router.post('/register', checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
+// checkIfAuthenticated, checkRoles(['Owner'])
+router.post('/register', async (req, res) => {
     let allRoles = await userDataLayer.getAllRoles()
     const registerForm = registerUserForm(allRoles);
 
