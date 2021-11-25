@@ -56,10 +56,15 @@ router.post("/create", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), a
 router.get("/:publisher_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
     // fetch the publisher that we want to delete
     const publisher = await dataLayer.getPublisherById(req.params.publisher_id)
-    // console.log(publisher.toJSON())
-    res.render("publishers/delete", {
-        publisher: publisher.toJSON()
-    })
+    const match = await publisher.related("books");
+    if (match.length === 0) {
+        res.render("publishers/delete", {
+            publisher: publisher.toJSON()
+        })
+    } else {
+        req.flash("error_messages", `${publisher.toJSON().name} cannot be deleted. There are exisiting books published by ${publisher.toJSON().name}`)
+        res.redirect("/publishers");
+    }
 })
 
 

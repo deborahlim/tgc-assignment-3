@@ -1,15 +1,21 @@
 const express = require("express");
 const router = express.Router();
 
-const { Author } = require("./../models");
+const {
+  Author
+} = require("./../models");
 const {
   createAuthorForm,
   createAuthorSearchForm,
   bootstrapField,
 } = require("../forms");
 
-const { checkIfAuthenticated, checkRoles } = require("./../middlewares");
+const {
+  checkIfAuthenticated,
+  checkRoles
+} = require("./../middlewares");
 const dataLayer = require("./../dal/books");
+
 
 router.get("/", checkIfAuthenticated, async (req, res) => {
   let q = Author.collection();
@@ -84,7 +90,7 @@ router.post(
       },
       error: async (form) => {
         res.render("authors/create", {
-          form: authorForm.toHTML(bootstrapField),
+          form: form.toHTML(bootstrapField),
         });
       },
     });
@@ -98,10 +104,16 @@ router.get(
   async (req, res) => {
     // fetch the author that we want to delete
     const author = await dataLayer.getAuthorById(req.params.author_id);
-
-    res.render("authors/delete", {
-      author: author.toJSON(),
-    });
+    const match = await author.related("books");
+    console.log(match.toJSON())
+    if (match.length === 0) {
+      res.render("authors/delete", {
+        author: author.toJSON(),
+      });
+    } else {
+      req.flash("error_messages", `${author.toJSON().name} cannot be deleted. There are exisiting books by ${author.toJSON().name}`)
+      res.redirect("/authors");
+    }
   }
 );
 

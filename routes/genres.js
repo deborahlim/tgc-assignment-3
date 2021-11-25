@@ -1,72 +1,77 @@
-const express = require( "express" )
+const express = require("express")
 const router = express.Router();
 
 const {
     Genre
-} = require( "../models" )
+} = require("../models")
 const {
     createGenreForm,
     bootstrapField
-} = require( "../forms" );
+} = require("../forms");
 
 const {
     checkIfAuthenticated,
     checkRoles
-} = require( "../middlewares" )
-const dataLayer = require( "../dal/books" )
+} = require("../middlewares")
+const dataLayer = require("../dal/books")
 
-router.get( "/", checkIfAuthenticated, async ( req, res ) => {
+router.get("/", checkIfAuthenticated, async (req, res) => {
 
     let genres = await Genre.collection().fetch()
     // console.log( genres.toJSON() )
-    res.render( "genres/index", {
+    res.render("genres/index", {
         genres: genres.toJSON(),
         active: {
             Genres: true
         }
 
-    } )
-} )
+    })
+})
 
-router.get( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
+router.get("/create", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
     let genreForm = createGenreForm()
-    res.render( "genres/create", {
-        form: genreForm.toHTML( bootstrapField )
-    } )
-} )
+    res.render("genres/create", {
+        form: genreForm.toHTML(bootstrapField)
+    })
+})
 
-router.post( "/create", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
+router.post("/create", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
     let genreForm = createGenreForm()
-    genreForm.handle( req, {
-        success: async ( form ) => {
-            let genre = new Genre( form.data )
+    genreForm.handle(req, {
+        success: async (form) => {
+            let genre = new Genre(form.data)
             await genre.save()
-            req.flash( "success_messages", `New genre ${genre.toJSON().name} has been added` )
-            res.redirect( "/genres" )
+            req.flash("success_messages", `New genre ${genre.toJSON().name} has been added`)
+            res.redirect("/genres")
         },
-        error: async ( form ) => {
-            res.render( "genres/create", {
-                form: genreForm.toHTML( bootstrapField )
-            } )
+        error: async (form) => {
+            res.render("genres/create", {
+                form: genreForm.toHTML(bootstrapField)
+            })
 
         }
-    } )
-} )
+    })
+})
 
-router.get( "/:genre_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
+router.get("/:genre_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
     // fetch the genre that we want to delete
-    const genre = await dataLayer.getGenreById( req.params.genre_id )
+    const genre = await dataLayer.getGenreById(req.params.genre_id)
+    const match = await genre.related("books");
+    if (match.length === 0) {
+        res.render("genres/delete", {
+            genre: genre.toJSON()
+        })
+    } else {
+        req.flash("error_messages", `${genre.toJSON().name} genre cannot be deleted. There are exisiting books with the genre ${genre.toJSON().name}.`)
+        res.redirect("/genres");
+    }
+})
 
-    res.render( "genres/delete", {
-        genre: genre.toJSON()
-    } )
-} )
 
-
-router.post( "/:genre_id/delete", checkIfAuthenticated, checkRoles( [ "Manager", "Owner" ] ), async ( req, res ) => {
-    const genre = await dataLayer.getGenreById( req.params.genre_id )
+router.post("/:genre_id/delete", checkIfAuthenticated, checkRoles(["Manager", "Owner"]), async (req, res) => {
+    const genre = await dataLayer.getGenreById(req.params.genre_id)
     await genre.destroy()
-    res.redirect( "/genres" )
-} )
+    res.redirect("/genres")
+})
 
 module.exports = router

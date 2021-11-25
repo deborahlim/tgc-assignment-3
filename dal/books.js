@@ -40,6 +40,7 @@ const getAuthorById = async (authorId) => {
         id: parseInt(authorId)
     }).fetch({
         require: true,
+        withRelated: ["books"]
     })
 }
 
@@ -48,6 +49,7 @@ const getPublisherById = async (publisherId) => {
         id: parseInt(publisherId)
     }).fetch({
         require: true,
+        withRelated: ["books"]
     })
 }
 
@@ -56,6 +58,7 @@ const getGenreById = async (genreId) => {
         id: parseInt(genreId)
     }).fetch({
         require: true,
+        withRelated: ["books"]
     })
 }
 
@@ -64,6 +67,7 @@ const getTagById = async (tagId) => {
         id: parseInt(tagId)
     }).fetch({
         require: true,
+        withRelated: ["books"]
     })
 }
 

@@ -2,10 +2,12 @@
 
     {{#block 'content'}}
         <h1 class="text-center my-5">Update Account Details: {{user.username}}</h1>
-        <form method="POST" class="form fw-bold">
-            <input type="hidden" name="_csrf" value="{{csrfToken}}" />
-            {{{form}}}
-            <input type="submit" value="Update Account Details" class="btn btn-primary mt-4" />
-        </form>
-    {{/block}} 
+        <div class="fw-bold mx-auto" style="width: 50%">
+            <form method="POST" class="">
+                <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+                {{{form}}}
+                <input type="submit" value="Update Account Details" class="btn btn-primary mt-4" />
+            </form>
+        </div>
+    {{/block}}
 {{/extends}}
