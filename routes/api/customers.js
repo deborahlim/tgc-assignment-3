@@ -145,13 +145,4 @@ router.post('/logout', async function (req, res) {
     }
 })
 
-
-router.get('/profile', checkIfAuthenticatedJWT, async (req, res) => {
-    // console.log( req )
-    const customer = req.customer;
-    // console.log( customer )
-    res.send(customer);
-})
-
-
 module.exports = router;

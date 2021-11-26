@@ -10,6 +10,7 @@ class CheckoutServices {
     async processCheckout() {
         let {
             id,
+            payment_status,
             metadata,
             amount_total,
         } = this.stripeSession
@@ -22,7 +23,7 @@ class CheckoutServices {
         // add each item to order items table and remove each corresponding cart item
         orderItems.forEach(async (orderItem) => {
             await orderDataLayer.createNewOrderItem(orderObj.id, orderItem.book_id, orderItem.quantity)
-            await bookDataLayer.changeStock(orderItem.book_id, orderItem.quantity, this.stripeSession.status);
+            await bookDataLayer.changeStock(orderItem.book_id, orderItem.quantity, payment_status);
             await cartServices.remove(orderItem.book_id);
         });
     }
