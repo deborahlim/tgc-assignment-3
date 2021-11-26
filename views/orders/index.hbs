@@ -19,7 +19,7 @@
 
                         <thead>
                             <tr>
-                                <th scope="col"></th>
+
                                 <th scope="col">ID</th>
                                 <th scope="col">Customer ID</th>
                                 <th scope="col">Created At</th>
@@ -30,16 +30,14 @@
                                 <th scope="col">Shipping Cost</th>
                                 <th scope="col"></th>
                                 <th scope="col"></th>
+                                <th scope="col"></th>
 
                             </tr>
 
                         </thead>
                         <tbody class="accordian">
                             {{#each orders}}
-                                <tr class="align-middle accordion " id="accordionExample">
-                                    <td><button data-target="#demo1" data-bs-toggle="collapse"
-                                            class="btn btn-secondary btn-sm">Details</button>
-                                    </td>
+                                <tr class="align-middle accordion" id="{{this.id}}">
                                     <th>
                                         {{this.id}}
                                     </th>
@@ -50,50 +48,53 @@
                                     <td>${{this.amountTotal}}</td>
                                     <td>{{this.shippingAddress}}</td>
                                     <td>${{this.shippingCost}}</td>
-
+                                    <td><button data-bs-target="#{{this.id}}t" data-bs-toggle="collapse"
+                                            class="btn btn-secondary btn-sm">Details</button>
+                                    </td>
                                     <td>
                                         <a href="/orders/{{this.id}}/update" class="btn btn-primary btn-sm">Update</a>
                                     </td>
                                     <td>
                                         <a href="/orders/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
                                     </td>
-                                <tr class="accordian-collapse collapse show" id="demo1"
-                                    data-bs-parent="#accordionExample">
-                                    <td colspan="12">
-                                        <div class="accordian-body">
-                                            <table class="table table-striped">
+                                <tr class="accordian-collapse collapse" id="{{this.id}}t" data-bs-parent="#{{this.id}}">
+                                    <td scope="col" colspan="3">
+                                        <div class="accordian-body table-responsive">
+                                            <table class=" table table-hover m-0 table-dark">
                                                 <thead>
-                                                    <tr class="info">
-                                                        <th>Job</th>
-                                                        <th>Company</th>
-                                                        <th>Salary</th>
-                                                        <th>Date On</th>
-                                                        <th>Date off</th>
-                                                        <th>Action</th>
+                                                    <tr class="">
+                                                        <th>Order Item ID</th>
+                                                        <th>Book ID</th>
+                                                        <th>Book Title</th>
+                                                        <th>Price</th>
+                                                        <th>Quantity</th>
                                                     </tr>
                                                 </thead>
-
                                                 <tbody>
-                                                    <tr class="accordion">
-                                                        <td>Enginner Software</td>
-                                                        <td>Google</td>
-                                                        <td>U$8.00000 </td>
-                                                        <td> 2016/09/27</td>
-                                                        <td> 2017/09/27</td>
-                                                    </tr>
+                                                    {{#each this.orderItems}}
+                                                        <tr class="accordion">
+                                                            <td>{{this.id}}</td>
+                                                            <td>{{this.book_id}}</td>
+                                                            <td>{{this.books.title}}</td>
+                                                            <td>{{this.books.cost}}</td>
+                                                            <td>{{this.quantity}}</td>
+                                                        </tr>
+                                                    {{/each}}
                                                 </tbody>
+
                                             </table>
 
                                         </div>
+
+                                    </td>
+                                </tr>
+
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
                 </div>
-                </td>
-                </tr>
-                </tr>
-                {{/each}}
-                </tbody>
-                </table>
             </div>
-        </div>
         </div>
     {{/block}}
 

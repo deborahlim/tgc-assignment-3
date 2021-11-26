@@ -25,7 +25,7 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
     searchForm.handle(req, {
         empty: async (form) => {
             let orders = await q.fetch({
-                withRelated: ["customers", "orderStatuses"]
+                withRelated: ["customers", "orderItems", "orderStatuses", "orderItems.books"]
             })
 
             res.render("orders/index", {
@@ -38,7 +38,7 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
         },
         error: async (form) => {
             let orders = await q.fetch({
-                withRelated: ["customers", "orderStatuses"]
+                withRelated: ["customers", "orderItems", "orderStatuses", "orderItems.books"]
             })
 
             res.render("orders/index", {
@@ -80,7 +80,7 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
                 q = q.where("publishedDate", "<=", form.data.createdDateTo)
             }
             let orders = await q.fetch({
-                withRelated: ["customers", "orderStatuses"]
+                withRelated: ["customers", "orderItems", "orderStatuses", "orderItems.books"]
             })
 
             res.render("orders/index", {
