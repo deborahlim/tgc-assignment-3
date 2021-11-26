@@ -13,11 +13,13 @@
             </div>
             <div class="">
                 <h1 class="display-3 text-center my-5">Orders</h1>
+
                 <div class="table-responsive">
                     <table class="table table-hover">
 
                         <thead>
                             <tr>
+                                <th scope="col"></th>
                                 <th scope="col">ID</th>
                                 <th scope="col">Customer ID</th>
                                 <th scope="col">Created At</th>
@@ -28,12 +30,16 @@
                                 <th scope="col">Shipping Cost</th>
                                 <th scope="col"></th>
                                 <th scope="col"></th>
+
                             </tr>
 
                         </thead>
-                        <tbody class="">
+                        <tbody class="accordian">
                             {{#each orders}}
-                                <tr class="align-middle">
+                                <tr class="align-middle accordion " id="accordionExample">
+                                    <td><button data-target="#demo1" data-bs-toggle="collapse"
+                                            class="btn btn-secondary btn-sm">Details</button>
+                                    </td>
                                     <th>
                                         {{this.id}}
                                     </th>
@@ -44,19 +50,50 @@
                                     <td>${{this.amountTotal}}</td>
                                     <td>{{this.shippingAddress}}</td>
                                     <td>${{this.shippingCost}}</td>
-                                    <td>${{this.orderItems}}</td>
+
                                     <td>
                                         <a href="/orders/{{this.id}}/update" class="btn btn-primary btn-sm">Update</a>
                                     </td>
                                     <td>
                                         <a href="/orders/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
                                     </td>
-                                </tr>
-                            {{/each}}
-                        </tbody>
-                    </table>
+                                <tr class="accordian-collapse collapse show" id="demo1"
+                                    data-bs-parent="#accordionExample">
+                                    <td colspan="12">
+                                        <div class="accordian-body">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr class="info">
+                                                        <th>Job</th>
+                                                        <th>Company</th>
+                                                        <th>Salary</th>
+                                                        <th>Date On</th>
+                                                        <th>Date off</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <tr class="accordion">
+                                                        <td>Enginner Software</td>
+                                                        <td>Google</td>
+                                                        <td>U$8.00000 </td>
+                                                        <td> 2016/09/27</td>
+                                                        <td> 2017/09/27</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
                 </div>
+                </td>
+                </tr>
+                </tr>
+                {{/each}}
+                </tbody>
+                </table>
             </div>
+        </div>
         </div>
     {{/block}}
 
