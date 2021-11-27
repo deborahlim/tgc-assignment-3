@@ -1,7 +1,6 @@
 const express = require("express");
 const CartServices = require("../../services/cart_services");
 const CheckoutServices = require("./../../services/checkout_services")
-const orderDataLayer = require("./../../dal/orders")
 const router = express.Router();
 const Stripe = require("stripe")(process.env.STRIPE_KEY_SECRET);
 const {

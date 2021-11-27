@@ -16,7 +16,7 @@ class CheckoutServices {
         } = this.stripeSession
         // status = unpaid
         let status = 4;
-        let order = await orderDataLayer.createNewOrder(id, metadata.customer_id, status, amount_total);
+        let order = await orderDataLayer.createNewOrder(id, metadata.customer_id, amount_total, status);
         console.log(order.toJSON());
         let orderObj = order.toJSON()
         let orderItems = JSON.parse(metadata.orders);
