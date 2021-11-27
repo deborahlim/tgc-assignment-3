@@ -109,7 +109,7 @@ router.get("/", checkIfAuthenticatedJWT, async function (req, res) {
 
     // add checkout to orders table
     let checkout = new CheckoutServices(stripeSession);
-    await checkout.processCheckout();
+    checkout.processCheckout();
     res.send({
       sessionId: stripeSession.id,
       publishableKey: process.env.STRIPE_KEY_PUBLISHABLE,

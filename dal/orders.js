@@ -33,7 +33,7 @@ const updateOrderStatus = async (id, newStatus, amountTotal, shippingAddress, sh
     await order.save();
 }
 
-const createNewOrder = async (id, customerId, status, amountTotal) => {
+const createNewOrder = async (id, customerId, amountTotal, status) => {
     let order = new Order({
         id: id,
         customer_id: customerId,
