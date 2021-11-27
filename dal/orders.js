@@ -37,7 +37,6 @@ const createNewOrder = async (id, customerId, status, amountTotal) => {
     let order = new Order({
         id: id,
         customer_id: customerId,
-        status: status,
         amountTotal: amountTotal / 100,
         order_status_id: status,
     })

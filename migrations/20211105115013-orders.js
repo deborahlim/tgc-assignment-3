@@ -26,10 +26,6 @@ exports.up = function (db) {
       unsigned: true,
       notNull: true,
     },
-    status: {
-      type: "string",
-      notNull: true,
-    },
     createdAt: {
       type: "datetime",
       notNull: true
