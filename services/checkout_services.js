@@ -16,7 +16,7 @@ class CheckoutServices {
         } = this.stripeSession
         // status = unpaid
         let status = 4;
-        let amount_total = amount_total.toFixed(2);
+        amount_total = (amount_total / 100).toFixed(2)
         let order = await orderDataLayer.createNewOrder(id, metadata.customer_id, amount_total, status);
         console.log(order.toJSON());
         let orderObj = order.toJSON()
@@ -40,7 +40,7 @@ class CheckoutServices {
             total_details
         } = this.stripeSession
         let orderItems = JSON.parse(metadata.orders);
-        let amount_total = amount_total.toFixed(2)
+        amount_total = (amount_total / 100).toFixed(2)
         let shippingAddress;
         if (shipping) {
             shippingAddress = shipping.address.line1 + ", Singapore " + shipping.address.postal_code;

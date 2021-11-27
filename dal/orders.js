@@ -24,7 +24,7 @@ const updateOrderStatus = async (id, newStatus, amountTotal, shippingAddress, sh
     // console.log(order.toJSON());
     if (newStatus === "complete") {
         await order.set("order_status_id", 1)
-        await order.set("amountTotal", amountTotal / 100)
+        await order.set("amountTotal", amountTotal)
         await order.set("shippingAddress", shippingAddress)
         await order.set("shippingCost", shippingCost / 100)
     } else if (newStatus === "expired" || newStatus === "unpaid") {
@@ -37,7 +37,7 @@ const createNewOrder = async (id, customerId, amountTotal, status) => {
     let order = new Order({
         id: id,
         customer_id: customerId,
-        amountTotal: amountTotal / 100,
+        amountTotal: amountTotal,
         order_status_id: status,
     })
     order.set("createdAt", new Date());
