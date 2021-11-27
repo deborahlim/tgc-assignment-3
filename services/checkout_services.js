@@ -17,6 +17,7 @@ class CheckoutServices {
         // status = unpaid
         let status = 4;
         let order = await orderDataLayer.createNewOrder(id, metadata.customer_id, status, amount_total);
+        console.log(order.toJSON());
         let orderObj = order.toJSON()
         let orderItems = JSON.parse(metadata.orders);
         let cartServices = new CartServices(orderObj.customer_id);
