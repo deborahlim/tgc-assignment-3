@@ -17,7 +17,7 @@
     7. As shop owner, I want my employees to be able to log in / out of the site so that all information in the database can only be accessed by those with a valid username / password.
 
 - ER diagram
-    - ![Screenshot 2021-11-21 at 3 38 06 PM]![Screenshot 2021-11-28 at 10 09 41 AM](https://user-images.githubusercontent.com/84578312/143726167-24a17d97-a9fb-46d8-b3e7-3b7ec3e5e848.png)
+    - ![Screenshot 2021-11-28 at 10 09 41 AM](https://user-images.githubusercontent.com/84578312/143726167-24a17d97-a9fb-46d8-b3e7-3b7ec3e5e848.png)
 
 - User Roles Diagram
     - ![Screenshot 2021-11-27 at 5 32 53 PM](https://user-images.githubusercontent.com/84578312/143675920-c343dd91-bb5f-4c4a-be1c-881d9e7fd28e.png)
