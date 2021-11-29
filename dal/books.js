@@ -1,10 +1,9 @@
 const {
-    Book,
-    Publisher,
+    Book
 } = require("../models")
 
 const getAllBooks = async () => {
-    return await Book.collection().fetch({
+    return await Book.collection().orderBy("id", "ASC").fetch({
         withRelated: ["authors", "formats", "genres", "tags", "publishers"]
     })
 }

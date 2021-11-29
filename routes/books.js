@@ -35,7 +35,7 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
 
     let searchForm = createSearchBooksForm(allFormats, allGenres, allPublishers, allTags, allAuthors)
     // query builder that means "SELECT * from books". Can continue to add clauses to a query builder until we execute it with a fetch function call. 
-    let q = Book.collection();
+    let q = Book.collection().orderBy("id", "ASC");
     searchForm.handle(req, {
         empty: async (form) => {
             let books = await q.fetch({
