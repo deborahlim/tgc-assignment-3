@@ -54,13 +54,13 @@
 |  <br>6.         |  <br>Test that all users can perform filter and search function on orders data                                                                 |  <br>1. Go to the orders tab. Type in a customer username in the search filter and click submit<br> <br>2. Repeat for the rest of the criteria                                                                                                                                                                                                                                |  <br>1. Only order made by that customer should be visible<br> <br>2. Only order with matching the criteria specified will be visible                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 |  <br>7.         |  <br>Test that all routes are protected except for login page                                                                                  |  <br>1. User tries to access  https://dashboard.heroku.com/apps/tgc-dl-the-book-corner/books when they are not logged in                                                                                                                                                                                                                                                               |  <br>1. User is directed back to the login page and is notifies that he cannot access that page without logging in                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 ## E) Technologies Used & Resources
-- Express 
-- Db-migrate
-- Bookshelf.js
-- Caolan Form
-- Express Handlebars
-- Stripe
-- Bootstrap 5
+- Express (https://expressjs.com/)
+- Db-migrate (https://db-migrate.readthedocs.io/en/latest/API/SQL/)
+- Bookshelf.js (https://bookshelfjs.org/)
+- Caolan Form (https://github.com/caolan/forms)
+- Express Handlebars (https://www.npmjs.com/package/express-handlebars)
+- Stripe (https://stripe.com/en-gb-sg)
+- Bootstrap 5 (https://getbootstrap.com/docs/5.0/getting-started/introduction/)
 
 Resources:
 - Navbar active styling
