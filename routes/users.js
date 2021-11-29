@@ -106,7 +106,9 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
 })
 
 router.get("/register", checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
-    let allRoles = await userDataLayer.getAllRoles()
+    let allRoles = await userDataLayer.getAllRoles();
+    // remove owner from choices
+    allRoles.shift();
     const registerForm = registerUserForm(allRoles);
     res.render("users/register", {
         form: registerForm.toHTML(bootstrapField),
@@ -117,9 +119,9 @@ router.get("/register", checkIfAuthenticated, checkRoles(['Owner']), async (req,
 
 
 router.post('/register', checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
-    let allRoles = await userDataLayer.getAllRoles()
+    let allRoles = await userDataLayer.getAllRoles();
+    allRoles.shift();
     const registerForm = registerUserForm(allRoles);
-
     registerForm.handle(req, {
         success: async (form) => {
             const user = new User({
@@ -250,10 +252,16 @@ router.post("/:user_id/update", checkIfAuthenticated, checkRoles(["Owner"]), asy
 router.get("/:user_id/delete", checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
     // fetch the user that we want to delete
     const user = await userDataLayer.getUserById(req.params.user_id)
-
-    res.render("users/delete", {
-        user: user.toJSON()
-    })
+    const users = await userDataLayer.getAllUsers();
+    let userJSON = user.toJSON();
+    if (userJSON.role_id === 1 && users.length > 1) {
+        req.flash("error_messages", "Unable to delete owner as there are other other existing users")
+        res.redirect("/users")
+    } else {
+        res.render("users/delete", {
+            user: user.toJSON()
+        })
+    }
 })
 
 router.post("/:user_id/delete", checkIfAuthenticated, checkRoles(['Owner']), async (req, res) => {
@@ -262,7 +270,9 @@ router.post("/:user_id/delete", checkIfAuthenticated, checkRoles(['Owner']), asy
     await user.destroy();
     const users = await userDataLayer.getAllUsers();
     if (users.length === 0) {
-        res.redirect("/logout");
+        req.session.currentUser = null;
+        res.locals.currentUser = null;
+        res.redirect("/")
     } else {
         res.redirect("/users");
     }
