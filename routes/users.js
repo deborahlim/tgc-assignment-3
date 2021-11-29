@@ -207,6 +207,7 @@ router.post("/:user_id/account/update", checkIfAuthenticated, async (req, res) =
 router.get("/:user_id/update", checkIfAuthenticated, checkRoles(["Owner"]), async (req, res) => {
     let allRoles = await userDataLayer.getAllRoles()
     const user = await userDataLayer.getUserById(req.params.user_id)
+    allRoles.shift();
     const updateUserForm = createUpdateUserForm(allRoles)
     updateUserForm.fields.username.value = user.get("username")
     updateUserForm.fields.email.value = user.get("email")
@@ -221,6 +222,7 @@ router.get("/:user_id/update", checkIfAuthenticated, checkRoles(["Owner"]), asyn
 router.post("/:user_id/update", checkIfAuthenticated, checkRoles(["Owner"]), async (req, res) => {
     let allRoles = await userDataLayer.getAllRoles()
     let user = await userDataLayer.getUserById(req.params.user_id);
+    allRoles.shift();
     let updateForm = createUpdateUserForm(allRoles);
     updateForm.handle(req, {
         success: async (form) => {
