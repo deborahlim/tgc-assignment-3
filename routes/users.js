@@ -255,7 +255,7 @@ router.get("/:user_id/delete", checkIfAuthenticated, checkRoles(['Owner']), asyn
     const users = await userDataLayer.getAllUsers();
     let userJSON = user.toJSON();
     if (userJSON.role_id === 1 && users.length > 1) {
-        req.flash("error_messages", "Unable to delete owner as there are other other existing users")
+        req.flash("error_messages", "Unable to delete owner as there are other existing users")
         res.redirect("/users")
     } else {
         res.render("users/delete", {
