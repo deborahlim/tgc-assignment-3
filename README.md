@@ -2,9 +2,10 @@
 
 ## A) Summary 
 - The goal of this project is to create an online e-commerce shop which sells books
-- Create a management system for the shop’s owner / employees to perform CRUD operations on books, customer orders and related data
-- Deployed URL: https://tgc-dl-the-book-corner.herokuapp.com/
-
+- Create a backend management system using Express and Bookshelf object relational mapping (ORM) with db-migrate
+- Target Audience: The shop’s owner / employees; who will be able to perform CRUD operations on books, customer orders and related data
+- Deployed URL (Shop owner / employee site): https://tgc-dl-the-book-corner.herokuapp.com/
+- Github link to the Vue frontend customer site of The Book Corner: https://github.com/deborahlim/tgc-assignment-3-client 
 
 ## B) UI / UX
 - User Stories (Shop Owner / Employees)
@@ -55,12 +56,21 @@
 |  <br>7.         |  <br>Test that all routes are protected except for login page                                                                                  |  <br>1. User tries to access  https://dashboard.heroku.com/apps/tgc-dl-the-book-corner/books when they are not logged in                                                                                                                                                                                                                                                               |  <br>1. User is directed back to the login page and is notifies that he cannot access that page without logging in                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 ## E) Technologies Used & Resources
 - Express (https://expressjs.com/)
-- Db-migrate (https://db-migrate.readthedocs.io/en/latest/API/SQL/)
-- Bookshelf.js (https://bookshelfjs.org/)
-- Caolan Form (https://github.com/caolan/forms)
-- Express Handlebars (https://www.npmjs.com/package/express-handlebars)
-- Stripe (https://stripe.com/en-gb-sg)
-- Bootstrap 5 (https://getbootstrap.com/docs/5.0/getting-started/introduction/)
+- Dotenv (https://github.com/motdotla/dotenv)
+- Cloudinary (https://cloudinary.com/) for uploading images
+- Connect-Flash (https://github.com/jaredhanson/connect-flash) for flash messages
+- Db-migrate (https://db-migrate.readthedocs.io/en/latest/API/SQL/) for ORM
+- Knex (https://github.com/knex/knex) for query builing
+- Bookshelf.js (https://bookshelfjs.org/) for ORM
+- Csurf (https://github.com/expressjs/csurf) for preventing CSRF
+- Caolan Form (https://github.com/caolan/forms) for bulding forms and form validation
+- Express Handlebars (https://www.npmjs.com/package/express-handlebars) for templating
+- Wax-on (https://github.com/keithws/wax-on) handlebar helpers
+- Express Sessions (https://github.com/expressjs/session) for user authentication
+- Session File Store (https://github.com/valery-barysok/session-file-store) for storing session data in the session file
+- Stripe (https://stripe.com/en-gb-sg) for handling online payments
+- Bootstrap 5 (https://getbootstrap.com/docs/5.0/getting-started/introduction/) for styling
+- JSON Web Tokens (https://github.com/auth0/node-jsonwebtoken) to protect api endpoints from unathorized access
 
 Resources:
 - Navbar active styling
