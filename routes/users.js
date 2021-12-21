@@ -54,7 +54,7 @@ router.post("/login", async (req, res) => {
                     "error_messages",
                     "Sorry, the authentication details you have provided does not work"
                 );
-                res.redirect("/login")
+                res.redirect("/users/login")
             } else {
                 // console.log( "User Exists" )
                 if (currentUser.get("password") === getHashedPassword(form.data.password)) {
@@ -79,7 +79,7 @@ router.post("/login", async (req, res) => {
                         "error_messages",
                         "Sorry, the authentication details you provided does not work"
                     );
-                    res.redirect("/");
+                    res.redirect("/users/login");
                 }
             }
         },
@@ -88,7 +88,7 @@ router.post("/login", async (req, res) => {
                 "error_messages",
                 "There are some problems with logging you in. Please fill in the form again."
             );
-            res.render("landing/index", {
+            res.render("users/login", {
                 form: form.toHTML(bootstrapField),
             });
         },
