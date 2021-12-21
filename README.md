@@ -1,5 +1,9 @@
 # Assignment 3 - The Book Corner: Online Book Shop (Shop Owner / Employee Site)
 
+## Owner Login Details
+Email: johndoe@gmail.com
+Password: johndoe111
+
 ## A) Summary 
 - The goal of this project is to create an online e-commerce shop which sells books
 - Create a backend management system using Express and Bookshelf object relational mapping (ORM) with db-migrate
